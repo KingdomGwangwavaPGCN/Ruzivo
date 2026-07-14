@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUZIVO — DEI Knowledge Challenge | PGCN</title>
+<style>
+  :root{
+    --navy:#0f2233; --mid:#1a3a5c; --gold:#F5A623;
+    --blue:#4A90D9; --green:#27AE60; --white:#ffffff;
+    --pink:#D81B8C; --purple:#9B59B6; --teal:#16A085; --red:#E74C3C; --orange:#E67E22;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(160deg,#050e1a 0%,var(--mid) 55%,#0a2015 100%);
+    min-height:100vh; color:#fff;
+  }
+  #app{min-height:100vh; display:flex; flex-direction:column;}
+  .screen{padding:20px 16px; flex:1; display:flex; flex-direction:column;}
+  .center{align-items:center; justify-content:center; text-align:center;}
+  .maxw{max-width:440px; width:100%; margin:0 auto;}
+  h1{font-size:46px; font-weight:900; letter-spacing:4px;}
+  .eyebrow{color:var(--gold); font-size:9px; letter-spacing:.22em; text-transform:uppercase; margin-bottom:3px;}
+  .sub{color:rgba(255,255,255,.75); font-size:12px; margin-bottom:3px;}
+  .tag{color:var(--gold); font-size:9px; font-weight:bold; margin-bottom:10px;}
+  .zones-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:10px;}
+  .zone-chip{border-radius:9px; padding:7px 3px; text-align:center;}
+  .zone-chip .ic{font-size:14px;}
+  .zone-chip p{font-size:9px; font-weight:bold; margin-top:2px;}
+  .feature-row{border-radius:12px; padding:9px; margin-bottom:9px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);}
+  .feature-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:5px;}
+  .feature-grid div{text-align:center;}
+  .feature-grid p{font-size:9px; font-weight:bold; margin-top:1px; line-height:1.3;}
+  .field-label{display:block; color:rgba(255,255,255,.85); font-size:12px; font-weight:600; margin-bottom:4px;}
+  input:focus-visible, select:focus-visible, button:focus-visible, [onclick]:focus-visible{
+    outline:3px solid var(--gold); outline-offset:2px;
+  }
+  input::placeholder{color:rgba(255,255,255,.55);}
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}
+    .confetti-piece{display:none;}
+  }
+  .flip-wrap{perspective:900px;margin-bottom:8px;cursor:pointer;height:158px;}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d;}
+  .flip-wrap.flipped .flip-inner{transform:rotateY(180deg);}
+  .flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:11px;overflow-y:auto;}
+  .flip-back{transform:rotateY(180deg);}
+  .sndbtn{position:fixed;top:10px;right:10px;z-index:99;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);font-size:16px;cursor:pointer;}
+  .selfbtn{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;font-weight:bold;font-size:14px;cursor:pointer;}
+  .selfbtn.active{background:var(--gold);color:#000;border-color:var(--gold);}
+  .support-box{border-radius:14px;padding:13px;margin-top:12px;text-align:center;background:linear-gradient(135deg,rgba(245,166,35,.10),rgba(39,174,96,.08));border:1px solid rgba(245,166,35,.45);}
+  .pay-chip{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:bold;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.5);color:var(--gold);}
+  /* Tablet */
+  @media (min-width:700px){
+    #app{zoom:1.15;}
+    .maxw{max-width:540px;}
+  }
+  /* Desktop */
+  @media (min-width:1100px){
+    #app{zoom:1.3;}
+    .maxw{max-width:580px;}
+  }
+  input, select{
+    width:100%; padding:12px; border-radius:12px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15); color:#fff; font-size:14px; text-align:center;
+  }
+  select{text-align:left;}
+  .btn{
+    width:100%; padding:12px; border-radius:12px; background:var(--gold); color:#000;
+    font-weight:900; font-size:14px; border:none; cursor:pointer; margin-top:8px;
+  }
+  .btn.secondary{background:rgba(255,255,255,.08); color:rgba(255,255,255,.85); font-weight:700;}
+  .btn.ghost{background:none; color:rgba(255,255,255,.65); font-size:12px; border:none; padding:12px;}
+  .langbar{display:flex; gap:4px; align-items:center; flex-wrap:wrap; justify-content:center;}
+  .langbtn{padding:8px 12px; border-radius:20px; font-size:11px; font-weight:bold; background:rgba(255,255,255,.1); color:rgba(255,255,255,.75); border:none; cursor:pointer;}
+  .langbtn.active{background:var(--gold); color:#000;}
+  .contact-box{border-radius:10px; padding:7px 12px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); margin-top:8px;}
+  .contact-box p{font-size:8px;}
+  .zonebtn{
+    border-radius:14px; padding:11px 13px; display:flex; align-items:center; gap:11px;
+    background:rgba(255,255,255,.03); border:2px solid rgba(255,255,255,.05); width:100%;
+    cursor:pointer; text-align:left; margin-bottom:8px; color:#fff;
+  }
+  .zonebtn.active{cursor:pointer;}
+  .zonebtn.locked{opacity:.3; cursor:default;}
+  .zonebtn.done{cursor:default;}
+  .zone-icon{width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
+  .zone-info{flex:1;}
+  .zone-info .zlabel{font-size:9px; font-weight:bold; letter-spacing:.07em; margin-bottom:1px;}
+  .zone-info .zname{font-size:12px; font-weight:bold; margin-bottom:1px;}
+  .zone-info .zsub{font-size:9px; color:rgba(255,255,255,.7);}
+  .zone-right{text-align:right; flex-shrink:0;}
+  .zone-right .zscore{font-weight:bold; font-size:11px;}
+  .zone-right .zcount{font-size:9px; color:rgba(255,255,255,.2);}
+  .qcard{border-radius:16px; padding:14px; margin-bottom:11px;}
+  .badge{font-size:9px; padding:2px 8px; border-radius:20px; font-weight:bold; display:inline-block; margin-bottom:8px;}
+  .qtext{color:#fff; font-weight:600; font-size:13px; line-height:1.65;}
+  .opt{
+    text-align:left; padding:11px 12px; border-radius:11px; background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(255,255,255,.08); color:rgba(255,255,255,.8); font-size:12px;
+    font-weight:500; cursor:pointer; width:100%; margin-bottom:7px; display:block;
+  }
+  .opt .oletter{font-weight:bold; margin-right:7px;}
+  .opt .oflag{float:right;}
+  .progress-track{width:100%; background:rgba(255,255,255,.08); border-radius:4px; height:2px; margin:6px 15px; max-width:calc(100% - 30px);}
+  .progress-fill{height:2px; border-radius:4px; transition:width .4s;}
+  .timer-ring{width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;}
+  .timer-inner{width:20px; height:20px; border-radius:50%; background:linear-gradient(160deg,#050e1a,var(--mid)); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900;}
+  .topbar{padding:12px 15px 0; display:flex; justify-content:space-between; align-items:center;}
+  .lives{font-size:14px;}
+  .hint-btn{margin-top:8px; padding:10px 14px; border-radius:10px; background:rgba(255,255,255,.05); border:1px dashed rgba(255,255,255,.3); color:rgba(255,255,255,.7); font-size:12px; cursor:pointer; width:100%;}
+  .explain{margin-top:10px; padding:12px; border-radius:12px;}
+  .likert-card{border-radius:20px; padding:18px; margin-bottom:16px; text-align:center;}
+  .likert-opt{padding:11px 13px; border-radius:11px; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); color:rgba(255,255,255,.85); font-size:12px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:9px; text-align:left; width:100%; margin-bottom:6px;}
+  .likert-num{width:22px; height:22px; border-radius:50%; border:2px solid; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; flex-shrink:0;}
+  .concept-card{border-radius:13px; padding:13px; margin-bottom:9px;}
+  .concept-card .ck{font-weight:bold; font-size:11px; margin-bottom:4px;}
+  .concept-card .cv{color:rgba(255,255,255,.75); font-size:11px; line-height:1.65;}
+  .cert-wrap{max-width:440px; width:100%; margin:0 auto; border-radius:22px; overflow:hidden; border:2px solid var(--blue);}
+  .cert-header{background:linear-gradient(135deg,#0a1a2e,#08251a); padding:20px; text-align:center;}
+  .stat-box{border-radius:8px; padding:8px 3px; text-align:center;}
+  .dimbar-row{margin-bottom:5px;}
+  .dimbar-track{width:100%; background:rgba(255,255,255,.08); border-radius:4px; height:6px;}
+  .dimbar-fill{height:6px; border-radius:4px; transition:width 1.2s cubic-bezier(.4,0,.2,1); width:0%;}
+  .lb-row{border-radius:12px; padding:11px 14px; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); margin-bottom:6px;}
+  .me-stat{border-radius:12px; padding:12px 8px; text-align:center;}
+  .footer-note{color:rgba(255,255,255,.1); font-size:8px; text-align:center; margin-top:10px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes cFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  .confetti-piece{position:fixed; top:-12px; pointer-events:none; z-index:200; animation:cFall linear forwards;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =========================================================================
+   RUZIVO — DEI Knowledge Challenge
+   Standalone build. Peace, Gender and Climate Network (PGCN).
+   Configure CONFIG.API_URL below with your Apps Script Web App URL
+   (see apps-script-backend.gs) to enable real, cross-country M&E data.
+   Without it, the game runs fully but M&E/leaderboard stay device-local.
+   ========================================================================= */
+
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbwODJgq-sjeQZSIkjxbGUrMgr2RJmyNW97Ak0-eu9fcZhx7HdTdfKThiOxet1Dwdn8/exec",
+  ADMIN_PIN: "PGCN2026"
+};
+
+const SIG_IMG = new Image();
+SIG_IMG.src = "data:image/png;base64,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";
+
+const GLOBE_IMG = new Image();
+GLOBE_IMG.src = "data:image/png;base64,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";
+
+const C = {navy:"#0f2233", mid:"#1a3a5c", gold:"#F5A623", blue:"#4A90D9", green:"#27AE60", white:"#ffffff", pink:"#D81B8C", purple:"#9B59B6", teal:"#16A085", red:"#E74C3C", orange:"#E67E22"};
+
+const ZONES = [
+  {id:1, name:"Know Yourself", sub:"Identity · Ubuntu · Socialisation", color:C.blue, icon:"🪞", tag:"S1–S2"},
+  {id:2, name:"Know Your Context", sub:"Zimbabwe Data · History · Policy", color:C.purple, icon:"🗺️", tag:"Zimbabwe"},
+  {id:3, name:"Gender Justice", sub:"Feminism · Womanism · GBV · Equity", color:C.pink, icon:"⚖️", tag:"SDG 5"},
+  {id:4, name:"Child & Youth", sub:"MBIMB · Protection · Rights", color:C.gold, icon:"🌱", tag:"SDG 16"},
+  {id:5, name:"Practitioner Toolkit", sub:"Self-Assessment · No Right or Wrong", color:C.green, icon:"🧰", tag:"Self-Check", type:"toolkit"},
+  {id:6, name:"Leadership Toolkit", sub:"TFA · TFZ · AIIDEV · UNDP · ZOU · IEP · MBIMB", color:C.red, icon:"✊", tag:"Leadership"},
+  {id:7, name:"DEI Profile", sub:"Values · Mindset · No Right or Wrong", color:C.teal, icon:"🧭", tag:"Profile", type:"psychometric"},
+  {id:8, name:"Zvose — Integration Capstone", sub:"All Zones · Scenario Synthesis · 70% to pass", color:C.purple, icon:"🌍", tag:"Capstone", type:"capstone"}
+];
+
+const ZONE_OBJECTIVES = {
+  1:["Explain Ubuntu / Hunhu as a communal theory of identity","Describe how the Cycle of Socialisation shapes values before awareness","Outline the five stages of the Cycle of Liberation"],
+  2:["Cite key Zimbabwe education and GBV statistics accurately","Explain how geography and history, not intelligence, shape outcomes","Connect Gukurahundi's legacy to present-day exclusion"],
+  3:["Distinguish gender equality from gender equity","Position gender justice within Africana Womanism","Apply the both/and imperative to programme design"],
+  4:["Apply the MBIMB principle of bodily autonomy","State the non-confidentiality rule for abuse disclosures","Identify child economic exploitation under ILO Convention 182"],
+  5:["Honestly self-assess your equity practice across the three phases","Identify your strongest practitioner dimension"],
+  6:["Define Positive Peace through equitable distribution and rights","Apply coaching leadership that builds capacity, not dependency","Name harm at the right level, private before public"],
+  7:["Map your personal DEI values profile","Identify your recommended Action Learning next step"],
+  8:["Integrate peace, gender, climate and child-protection reasoning in one judgement","Resolve realistic dilemmas where domains collide","Demonstrate readiness for Integrated Mastery at the 70% threshold"]
+};
+
+const FLIP_CARDS = {
+  1:[{s:"A colleague insists: 'Tribalism ended at independence in 1980. Why keep raising it?'",a:"Acknowledge legal change, then distinguish law from socialisation :- values absorbed over generations do not expire with a constitution.",e:"The Cycle of Socialisation persists beyond legislation. Naming this is the Waking Up stage of liberation, not divisiveness."},
+     {s:"You notice you keep assuming the quietest learner in your class 'has nothing to contribute.'",a:"Recognise the assumption as socialised bias, then deliberately create structured openings for that learner's voice.",e:"Interrupting your own conditioning is where the Cycle of Liberation begins :- Waking Up precedes Reaching Out."}],
+  2:[{s:"A Form 4 learner cannot register for O-Level exams because she has no birth certificate. Her family fled Matabeleland in the 1980s.",a:"Treat this as a structural and historical barrier, not a family failure :- escalate to the head, engage the Registrar's office and support the documentation process.",e:"Gukurahundi's destroyed records still block exam registration today. History shapes now."},
+     {s:"A district official says a rural school's 18% pass rate proves 'those children are slow.'",a:"Reframe with evidence :- Zimbabwe's 33.19% national O-Level pass rate tracks resources and geography, not intelligence.",e:"Deficit framing blames children for structural under-investment. Equity analysis names the system."}],
+  3:[{s:"Your school gives every learner an identical bursary amount and calls it fair.",a:"Explain that identical treatment is equality; equity would weight support toward learners facing the steepest barriers, such as girls at risk of dropout.",e:"Equality removes no structural barrier by itself. Equity deliberately elevates the historically disadvantaged."},
+     {s:"A boys' mentorship programme on positive masculinity is attacked as 'anti-girls.'",a:"Defend it through the both/and imperative :- empowering girls AND transforming boys addresses the structure, not just the symptom.",e:"Gender justice that ignores boys leaves the system that produces harm untouched."}],
+  4:[{s:"A 12-year-old sells vegetables at the growth point during school hours. An uncle collects the money each evening.",a:"This is child economic exploitation, not household chores :- it is adult-directed, profit-taking and school-displacing. Engage child protection channels.",e:"ILO Convention No. 182 covers organised exploitation of children. Culture is never a shield for exploitation."},
+     {s:"A learner discloses abuse and begs you: 'Promise you will tell no one.'",a:"Never promise secrecy. Tell the child, gently, that keeping them safe means involving people whose job is protection, and keep them informed at every step.",e:"Disclosures of abuse are NEVER confidential. A false promise of secrecy protects the abuser, not the child."}],
+  6:[{s:"In a staff meeting a senior teacher mocks a junior colleague's rural accent. People laugh.",a:"Name the harm at the right level :- a private word first if the harm was contained, publicly if the harm was public, so the room learns the standard.",e:"In-the-moment action calibrates level. Silence teaches the room that mockery is acceptable."},
+     {s:"Your mentee brings you every problem and waits for your solution.",a:"Stop solving. Ask powerful questions :- 'What have you already tried? What would you advise someone else?' Build their capacity to decide.",e:"Coaching leadership builds capability, not dependency. Dependency is a leadership failure dressed as helpfulness."}],
+  8:[{s:"A drought relief committee in Chivi is entirely male, yet women and girls walk furthest for water.",a:"Restructure participation so those with lived experience of the burden shape the decisions :- women's presence is a design requirement, not a courtesy.",e:"Positive Peace demands equitable decision-making; gender equity demands deliberate inclusion; climate response fails without both."},
+     {s:"Design one intervention that advances peace, gender and climate at once.",a:"Example :- women-led water-point governance :- it redistributes decision power (gender), reduces resource conflict (peace) and manages a climate-stressed resource (climate).",e:"Integration is the capstone skill :- one well-designed intervention can move all three PGCN pillars together."}]
+};
+
+const ZONE_CONCEPTS = {
+  1:[{k:"Ubuntu / Hunhu", v:"'I am because we are.' Identity is communal, not individual. Stanlake Samkange formalised this as Zimbabwean political philosophy in 1980."},
+     {k:"Cycle of Socialisation", v:"We absorb values, norms and identities from birth, before we have the language to question them."},
+     {k:"Cycle of Liberation", v:"Waking Up → Reaching Out → Building Community → Coalescing → Creating Change."}],
+  2:[{k:"Zimbabwe's Education Crisis", v:"33.19% O-Level pass rate. 895,000+ children out of school. Geography, not intelligence, determines outcomes."},
+     {k:"GBV in Zimbabwe", v:"1 in 3 women have experienced physical violence. 25.8% of all GBV victims are children."},
+     {k:"History Shapes Now", v:"Gukurahundi (1983–87) still blocks exam registration through destroyed birth certificates."}],
+  3:[{k:"Equality vs Equity", v:"Gender equality removes barriers for all. Gender equity deliberately elevates those historically disadvantaged."},
+     {k:"Africana Womanism", v:"Gender justice rooted in African epistemology, not a Western import."},
+     {k:"Both / And Imperative", v:"Empowering girls AND transforming boys addresses structure, not just symptom."}],
+  4:[{k:"My Body Is My Body (MBIMB)", v:"Bodily autonomy is a child protection tool. Disclosures of abuse are NEVER confidential."},
+     {k:"Period Poverty", v:"60% of rural girls lack reliable menstrual products. 20% of school days are lost."},
+     {k:"Child Economic Exploitation", v:"Organised child begging directed by adults violates ILO Convention No. 182."}],
+  5:[{k:"Phase 1 — Diagnose", v:"What behaviour is happening? What unconscious worldview lies beneath it?"},
+     {k:"Phase 2 — Equity Alternative", v:"What would equity-aligned beliefs and behaviour look like here?"},
+     {k:"Phase 3 — Take Action", v:"What conditions support new values and behaviours?"}],
+  6:[{k:"IEP Positive Peace", v:"Peace is measured through equitable resource distribution and rights acceptance."},
+     {k:"Coaching Leadership", v:"Build others' capacity, not dependency. Ask powerful questions."},
+     {k:"In-the-Moment Action", v:"Name harm at the right level first. Private before public."}],
+  8:[{k:"Zvose — All Things Together", v:"Real DEI practice never arrives one topic at a time. This capstone tests whether you can hold identity, context, gender, protection and leadership in a single judgement."},
+     {k:"Certification Standard", v:"Mixed questions from all zones plus new integration scenarios. 70% or above earns Integrated Mastery on your certificate. Three attempts permitted."},
+     {k:"Scenario Method", v:"There is one equity-aligned response per dilemma. Read slowly :- the wrong options are the comfortable ones."}]
+};
+
+const ORGS = ["Teach For All","Teach For Zimbabwe","AIIDEV Africa","UNDP","Zimbabwe Open University (ZOU)","PGCN","MBIMB Network","Inst. for Economics & Peace","School / Education Institution","Government / Ministry","Civil Society / NGO","Community Organisation","Other / Individual"];
+const ROLES = ["Teacher / Educator","Student / Youth Learner","Development Professional","Community Leader","Researcher / Academic","Policy Maker / Government","NGO / Civil Society Worker","DEI Advocate / Practitioner","School Leader / Administrator","Other"];
+
+const Q = [
+{z:8,t:"scenario",p:20,q:"A Form 3 girl misses school days every month. Classmates tease her; a male teacher shrugs: 'girls just miss school.' Your integrated response:",o:["Advise her to try harder to attend","Address the material need (products, WASH facilities) AND privately name the teacher's framing, then propose a school-level policy","Report the teacher to the head immediately and publicly","Ask her parents to manage the problem at home"],a:1,e:"Period poverty (Zone 4) meets gender framing (Zone 3) and in-the-moment leadership (Zone 6). Equity responses fix the structure and the narrative, not the girl."},
+{z:8,t:"scenario",p:20,q:"After drought hits Ward 3, the water committee deciding borehole placement is all-male, though women and girls fetch the water. Best action:",o:["Proceed :- the committee was democratically chosen","Ask the men to consult their wives at home","Restructure the committee so those with lived experience of water burden hold decision seats","Wait for the next election cycle"],a:2,e:"Positive Peace (Zone 6) requires equitable decision structures; gender equity (Zone 3) requires deliberate inclusion; climate adaptation (Zone 2 context) fails without the knowledge of those who carry the burden."},
+{z:8,t:"scenario",p:20,q:"An adult directs several children begging at a growth point during school hours. A colleague says: 'leave it, that is their culture.' You:",o:["Respect the cultural framing and move on","Give the children money directly","Recognise organised child economic exploitation under ILO 182 and engage child protection channels","Confront the adult publicly on the spot"],a:2,e:"Zone 4 protection knowledge plus Zone 1 socialisation analysis :- 'culture' is being used to normalise exploitation. Protection channels, not confrontation or charity, protect the children."},
+{z:8,t:"scenario",p:20,q:"A new teacher from Matabeleland faces slurs in your staffroom referencing 1980s history. The room stays silent. Your first move:",o:["Stay out of regional politics","Name the harm at the appropriate level, ground the standard in Hunhu, and raise the historical wound with leadership as an institutional matter","Advise the teacher to develop thicker skin","Send an anonymous complaint"],a:1,e:"Zone 2 history, Zone 1 Ubuntu and Zone 6 in-the-moment action integrate :- public harm requires the room to hear the standard, and historical wounds require institutional, not personal, response."},
+{z:8,t:"scenario",p:20,q:"A donor insists a Sahel youth climate fund be 'strictly gender-neutral to be fair.' Your equity-grounded reply:",o:["Agree :- neutrality guarantees fairness","Explain that neutral access replicates existing barriers; disaggregate the data and deliberately weight access for young women","Reject the fund entirely","Accept now, adjust quietly later"],a:1,e:"Equality versus equity (Zone 3) applied to climate finance (Zone 2 context) :- neutral rules on an unequal field produce unequal outcomes. Equity is corrective by design."},
+{z:8,t:"scenario",p:20,q:"A school WASH club: girls do most of the work while boys hold all leadership posts. The integrated fix:",o:["Praise the girls' work ethic publicly","Rotate titles alphabetically","Build girls' leadership capacity through coaching AND restructure the club's roles :- both the people and the structure","Dissolve the club"],a:2,e:"Zone 3 both/and plus Zone 6 coaching leadership :- developing individuals without changing the structure, or vice versa, leaves the pattern intact."},
+{z:8,t:"scenario",p:20,q:"After a cyclone, relief registration requires national ID :- excluding child-headed households whose documents were destroyed. You:",o:["Follow procedure :- rules are rules","Adapt verification (community attestation) so the most vulnerable access relief, and flag the documentation barrier upward","Tell the children to apply for IDs first","Distribute privately to avoid the system"],a:1,e:"Zone 2 documentation history, Zone 4 child rights and Zone 6 equitable distribution converge :- procedure that excludes the most vulnerable is structural harm wearing a uniform."},
+{z:8,t:"scenario",p:20,q:"You may fund ONE intervention touching all three PGCN pillars at once. Strongest candidate:",o:["A boys-only football league","Women-led water-point governance with youth apprenticeships","A one-day awareness march","Importing a Western DEI curriculum unchanged"],a:1,e:"It redistributes decision power (gender), reduces resource conflict (peace) and stewards a climate-stressed resource (climate) :- one design, three pillars, locally led."},
+{z:1,t:"mcq",p:10,q:"The Cycle of Socialisation and Cycle of Liberation were developed by:",o:["Paulo Freire","Bobbie Harro","bell hooks","Stanlake Samkange"],a:1,e:"Bobbie Harro's frameworks map how systems shape identity before awareness, and how liberation becomes possible through collective action."},
+{z:1,t:"tf",p:10,q:"Socialisation begins before we are conscious of it, absorbed through family and early community.",a:true,e:"We absorb values and identity markers from birth. Unlearning requires sustained, intentional effort."},
+{z:1,t:"mcq",p:10,q:"The Shona concept that directly parallels Ubuntu philosophy is:",o:["Lobola","Nhaka","Hunhu","Gota"],a:2,e:"Hunhu, formalised as Zimbabwean political philosophy by Stanlake Samkange in 1980."},
+{z:1,t:"mcq",p:10,q:"Ubuntu 'umuntu ngumuntu ngabantu' most directly supports:",o:["Individual achievement as the ultimate goal","Collective responsibility, equity requires community not just personal action","Merit systems as inherently neutral","Western frameworks as universally applicable"],a:1,e:"Ubuntu frames equity as a communal obligation. The village is incomplete when any member is excluded."},
+{z:1,t:"scenario",p:20,q:"A colleague says: 'I treat everyone the same, I don't see gender.' You:",o:["Agree, treating everyone the same is equality","Name the worldview: gender-blindness erases lived experience and is not equity","Stay silent to preserve the relationship","Refer the matter to HR"],a:1,e:"Gender-blindness denies structural disadvantage. Equity requires seeing difference and responding with deliberate, corrective action."},
+{z:1,t:"mcq",p:10,q:"The Cycle of Liberation begins with:",o:["Coalition building","Taking organised social action","Waking up, introspection and growing awareness","Changing national institutions"],a:2,e:"Liberation begins internally. You cannot change what you cannot see."},
+{z:1,t:"tf",p:10,q:"Dominant group members often experience their own identity as 'default' rather than as a socialised identity.",a:true,e:"Creating space for this recognition without shame is a foundational DEI practitioner skill."},
+{z:1,t:"mcq",p:10,q:"Why is personal storytelling foundational in DEI work?",o:["It is easier than data","Stories surface how systems shaped our identity, making invisible socialisation visible","It replaces academic DEI frameworks","It builds relationships without intellectual engagement"],a:1,e:"Storytelling is epistemological, the stories we carry contain evidence of how systems have shaped us."},
+{z:1,t:"tf",p:10,q:"A DEI practitioner's first obligation is to change others, personal self-awareness is secondary.",a:false,e:"False. DEI work must begin with self. You cannot facilitate transformation in others that you have not begun in yourself."},
+{z:1,t:"scenario",p:30,q:"BOSS LEVEL — A participant says: 'I don't have an identity, I'm just normal.' You are facilitating. You:",o:["Move on quickly to avoid disrupting the flow","Invite reflection: everyone has a socialised identity, including dominant groups","Correct them sharply in front of the group","Ask other participants to respond on your behalf"],a:1,e:"Dominant groups experience their identity as 'default', which is itself a socialised condition."},
+{z:2,t:"mcq",p:10,q:"Approximately what proportion of Zimbabwean women aged 15–49 have experienced physical violence?",o:["1 in 10","1 in 5","1 in 3","1 in 2"],a:2,e:"Approximately 1 in 3 (39.4%). Structural responses are required simultaneously."},
+{z:2,t:"mcq",p:10,q:"Section 56 of Zimbabwe's 2013 Constitution guarantees:",o:["The right to a basic state-funded education","Equality and non-discrimination across all protected characteristics","Freedom of conscience and religion","The right to form political parties"],a:1,e:"Section 56 guarantees equality and non-discrimination."},
+{z:2,t:"tf",p:10,q:"Zimbabwe's national O-Level pass rate in 2024 was above 50%.",a:false,e:"False, the 2024 national pass rate was 33.19%."},
+{z:2,t:"mcq",p:10,q:"What percentage of Zimbabwean women were married before age 18 as of 2022?",o:["8.4%","16.2%","33.7%","42.1%"],a:1,e:"16.2%, a declining but persistently serious barrier."},
+{z:2,t:"scenario",p:20,q:"A policy document states: 'Women in precolonial Africa were always subordinate to male authority.' In a workshop, you:",o:["Accept it","Challenge it: women held spiritual authority, agricultural governance and mediation roles","Avoid the debate","Agree but note things have improved"],a:1,e:"Spirit mediums like Nehanda demonstrate substantial precolonial female agency."},
+{z:2,t:"mcq",p:10,q:"The SADC Protocol commits member states to what percentage of women in decision-making by 2030?",o:["30%","40%","50%","60%"],a:2,e:"50%. Parliaments with higher female representation demonstrate stronger legislative attention to health, education and child protection."},
+{z:2,t:"mcq",p:10,q:"Matabeleland North's Grade 7 pass rate in 2020 was:",o:["31%","24%","16%","8%"],a:2,e:"16%, compared to Harare's 66.5%."},
+{z:2,t:"tf",p:10,q:"Only 15% of Zimbabwe's population completes upper secondary education.",a:true,e:"Access without completion is inclusion without equity."},
+{z:2,t:"mcq",p:10,q:"The BaTonga people of Binga were displaced to build:",o:["Hwange Power Station","Kariba Dam","Cahora Bassa Dam","The Limpopo Valley Irrigation Scheme"],a:1,e:"23,000 BaTonga were displaced to generate electricity."},
+{z:2,t:"scenario",p:30,q:"BOSS LEVEL — A district education officer says: 'Our pass rates are low because rural parents don't value education.' Applying the Village Systems Model, you:",o:["Agree, community attitudes drive outcomes","Diagnose all vectors: Geography, Economic, Policy, Institutional, Climate, Community and Gender","Suggest parent education programmes only","Avoid disagreeing with the officer's authority"],a:1,e:"The Village Systems Model demands analysis across all vectors simultaneously."},
+{z:3,t:"mcq",p:10,q:"Africana Womanism was developed by:",o:["Chimamanda Ngozi Adichie","Clenora Hudson-Weems","Oyèrónkẹ Oyěwùmí","bell hooks"],a:1,e:"Hudson-Weems situates African women's struggle within race, class, culture and community."},
+{z:3,t:"tf",p:10,q:"Gender equity and gender equality mean the same thing.",a:false,e:"Gender equality removes barriers for all. Gender equity applies corrective measures for historical disadvantage."},
+{z:3,t:"mcq",p:10,q:"Gender equity involves deliberately ___ the girl child given historical structural disadvantage:",o:["Protecting","Separating","Elevating","Privileging"],a:2,e:"Elevating is corrective, not preferential."},
+{z:3,t:"scenario",p:20,q:"A donor insists your programme adopt a specific ideological position to receive funding. You:",o:["Accept, funding is critical","Assert institutional sovereignty: reject ideological conditionality","Partially comply while maintaining internal disagreement","Ignore the condition and accept the money"],a:1,e:"Community-generated knowledge, not donor-conditioned ideology, must drive programming design."},
+{z:3,t:"mcq",p:10,q:"The spirit medium who led Zimbabwean anti-colonial resistance is:",o:["Lobengula","Nehanda","Mbuya Chipfaya","Sekai Nzenza"],a:1,e:"Nehanda exercised political agency and spiritual leadership long before Western feminist movements emerged."},
+{z:3,t:"tf",p:10,q:"The 50/50 representation goal is a demand for identical domestic roles for men and women.",a:false,e:"50/50 is a governance principle for equitable presence in spaces of authority."},
+{z:3,t:"mcq",p:10,q:"The 2021 Zimbabwe GBV data records how many women abused nationally?",o:["3,053","5,301","12,186","15,239"],a:2,e:"12,186 women, alongside 3,053 men and 5,301 children."},
+{z:3,t:"scenario",p:20,q:"A colleague argues: 'Focusing on boy child education takes resources away from girls.' You:",o:["Agree, evidence prioritises girls","Affirm girls' priority needs, then introduce the both/and evidence","Dismiss the concern","Suggest separating the debates"],a:1,e:"GBV prevention that invests only in girls without transforming boys addresses symptom rather than structure."},
+{z:3,t:"mcq",p:10,q:"The Gota programme develops:",o:["Girl child scholarships","Boy child responsibility, care and respect","Menstrual health provision","Community mediation in GBV cases"],a:1,e:"Investing in transformative boy child programming is structurally less costly than repairing harm from untransformed masculinity."},
+{z:3,t:"scenario",p:30,q:"BOSS LEVEL — A headteacher says: 'We focus on the girl child only, boys are fine.' You:",o:["Agree, institutional focus should remain exclusively on girls","Present the evidence and propose a both/and school programme","Stay silent, the headteacher has authority","Wait for national policy to address boy child issues"],a:1,e:"The both/and imperative: girl child empowerment and boy child transformation are structural complements."},
+{z:4,t:"mcq",p:10,q:"According to Zimbabwe's 2021 GBV data, what percentage of all GBV victims were children?",o:["12.4%","19.1%","25.8%","31.2%"],a:2,e:"25.8%, 4,115 girls and 1,186 boys."},
+{z:4,t:"tf",p:10,q:"Excluding boys from menstrual health education protects girls' safe space and produces better equity outcomes.",a:false,e:"Exclusion produces ignorance, stigma and institutional barriers for girls."},
+{z:4,t:"mcq",p:10,q:"UNICEF Zimbabwe (2025) estimated how many children require urgent humanitarian assistance?",o:["1.2 million","2.1 million","3.5 million","4.8 million"],a:2,e:"3.5 million, driven by El Niño drought."},
+{z:4,t:"scenario",p:20,q:"MBIMB — A Form 1 student discloses that an older student touched them inappropriately and asks you not to tell anyone. You:",o:["Respect confidentiality and say nothing","Reassure the student, explain you are mandated to report to protect them","Handle it yourself without involving administration","Tell the student's parents directly, bypassing school procedures"],a:1,e:"My Body Is My Body: disclosures of abuse are NEVER confidential."},
+{z:4,t:"mcq",p:10,q:"Approximately what percentage of rural Zimbabwean girls' school days are lost to period poverty?",o:["5%","10%","20%","35%"],a:2,e:"20%, one school day in five."},
+{z:4,t:"tf",p:10,q:"Male GBV survivors face fewer disclosure barriers than female survivors.",a:false,e:"Male survivors face compounded barriers: stigma, absent support infrastructure and masculinity norms."},
+{z:4,t:"mcq",p:10,q:"Zimbabwe's BEAM programme does NOT currently cover:",o:["Tuition fees","Examination fees","School uniforms, meals and learning materials","Building fund contributions"],a:2,e:"A child can be a registered BEAM beneficiary and still be sent home for lacking a uniform."},
+{z:4,t:"scenario",p:20,q:"Children around 10 years old are organised as beggars in a city CBD with daily financial targets set by adults. This constitutes:",o:["A poverty coping strategy requiring community sensitivity","Child economic exploitation under ILO Convention No. 182","A cultural practice requiring contextual sensitivity","A welfare issue only"],a:1,e:"Directing attention to the supervising adults identifies a structured exploitation system."},
+{z:4,t:"mcq",p:10,q:"The Education Amendment Act of 2020 prohibits:",o:["Holiday lessons at private centres","Exclusion from school on grounds of pregnancy","Male teachers from teaching female-only classes","Corporal punishment in primary schools only"],a:1,e:"Implementation gaps remain, mandatory maternity leave still functions as de facto exclusion in some schools."},
+{z:4,t:"scenario",p:30,q:"BOSS LEVEL — A 13-year-old girl has been absent 3 weeks. Her teacher says: 'Her family couldn't afford the uniform.' Applying the Village Systems Model, you identify barriers in:",o:["Only the Economic Vector","Policy, Economic, Gender and Community Vectors simultaneously","Only the Institutional Vector","The Climate Vector only"],a:1,e:"A single-vector response to a multi-vector exclusion will always fall short."},
+{z:6,t:"scenario",p:20,q:"TFZ LEADERSHIP — Your headteacher publicly mocks a student who raised a gender equality concern. Your first action is:",o:["Stay silent","Name the harm privately with the headteacher after assembly","Post about it on social media immediately","Report directly to the Ministry without engaging the headteacher first"],a:1,e:"Name harm at the right level first. Private, evidence-grounded engagement is proportionate and relationship-preserving."},
+{z:6,t:"mcq",p:10,q:"IEP — Positive Peace links to DEI through:",o:["Absence of violent conflict as the sole peace measure","Equitable distribution of resources and acceptance of rights","Economic growth rates as the primary peace indicator","Military and security sector reform exclusively"],a:1,e:"Every child in school, every community included, is a peace-building act."},
+{z:6,t:"scenario",p:20,q:"AIIDEV / UNDP — A partner asks you to co-design a youth DEI training for 200 participants across 5 provinces. Your first design decision is:",o:["Use a global DEI curriculum from the internet to save time","Begin with a community needs assessment, grounding the curriculum in local data","Hire an international consultant to lead the full design","Focus on urban participants only"],a:1,e:"PGCN's research-first model: community knowledge drives design, not convenience."},
+{z:6,t:"scenario",p:20,q:"ZOU — Your research confirms girls in Ward 3 miss school during flooding season. Your DEI leadership response is:",o:["Publish the finding and consider it done","Connect research to action: advocate for climate-resilient infrastructure and flexible attendance policies","Wait for the government to act","Focus on individual girls' resilience rather than system change"],a:1,e:"Research without action is scholarship without leadership."},
+{z:6,t:"scenario",p:20,q:"COACHING LEADERSHIP — A junior DEI advocate is frustrated that their advocacy is being ignored. You:",o:["Tell them exactly what to do","Use a coaching framework: ask powerful questions that help them design their own next step","Advise them to give up","Focus only on their emotional state"],a:1,e:"Coaching-informed leadership builds capacity, not dependency."},
+{z:6,t:"scenario",p:20,q:"ORGANISATIONAL DEI — Your organisation's first DEI policy focuses entirely on hiring diversity targets with nothing on inclusion. You:",o:["Accept it, diversity targets are a good start","Advocate to expand the policy toward belonging practices and accountability","Reject the entire policy","Focus only on targets"],a:1,e:"Diversity is the input, inclusion is the system."},
+{z:6,t:"scenario",p:20,q:"INTERSECTIONAL LEADERSHIP — You facilitate a session with a rural female teacher, a male urban professional, a differently-abled youth and a community elder. You open by:",o:["Starting with the most senior person to establish order","Creating a structured space where each lived experience is explicitly valued","Finding common ground and avoiding all discussion of difference","Asking the youngest person to present first as a symbolic gesture"],a:1,e:"Intersectional leadership requires naming and working with power differences from the first moment."},
+{z:6,t:"mcq",p:10,q:"MBIMB — 'My Body Is My Body' means:",o:["Children can refuse all adult requests","Children have the right to bodily autonomy and know they will be believed if they disclose","Parents own children's bodies until age 16","Only girls need bodily autonomy education"],a:1,e:"Body safety is inseparable from gender equity and child rights."},
+{z:6,t:"scenario",p:30,q:"BOSS LEVEL — You present RUZIVO to 166 DEI advocates across 37 countries. In 3 minutes, the single most important thing you communicate is:",o:["Explain all the technical features in detail","RUZIVO is a knowledge journey grounded in Zimbabwe's own data and Ward 3's lived experience","Focus on the certificate design and multilingual features","Apologise for any technical limitations"],a:1,e:"The most powerful pitch names the WHY, not the HOW."}
+];
+
+const PRACTITIONER_DIMS = [
+  {id:"diagnostic",label:"Diagnostic Skill",icon:"🔬",color:C.green},
+  {id:"facilitation",label:"Facilitation Confidence",icon:"🎙️",color:C.blue},
+  {id:"child_safety",label:"Child Safety Lens",icon:"🛡️",color:C.gold},
+  {id:"peace",label:"Peace & Systems Thinking",icon:"☮️",color:C.teal},
+  {id:"tools",label:"Tool Application",icon:"🧰",color:C.purple},
+  {id:"courage",label:"Institutional Courage",icon:"⚡",color:C.orange}
+];
+const PSYCH_Q5 = [
+  {dim:"diagnostic",s:"I can identify the worldview or belief beneath an inequitable behaviour before I respond to it."},
+  {dim:"diagnostic",s:"When I observe an unfair outcome, I ask what system produced it, not just who caused it."},
+  {dim:"diagnostic",s:"I can distinguish between a behaviour I see and the mindset that produced it."},
+  {dim:"facilitation",s:"I feel confident holding a difficult conversation about race, gender or power without shutting it down."},
+  {dim:"facilitation",s:"I can sit with silence and discomfort in a group without rushing to resolve it prematurely."},
+  {dim:"facilitation",s:"I know how to re-centre a marginalised voice in a conversation where it has been overlooked."},
+  {dim:"child_safety",s:"I understand that teaching children about bodily autonomy and consent is a protection tool, not just an adult topic."},
+  {dim:"child_safety",s:"I feel equipped to facilitate age-appropriate conversations about personal safety with young people."},
+  {dim:"peace",s:"I can connect a local DEI challenge, such as school dropout, to its broader peace and systems context."},
+  {dim:"peace",s:"I believe building Positive Peace through inclusive institutions is inseparable from DEI work."},
+  {dim:"tools",s:"I have at least three specific tools I can deploy in the moment when I witness or experience inequity."},
+  {dim:"tools",s:"I know the difference between Lack of Safety and Discomfort, and I respond to each differently."},
+  {dim:"tools",s:"I rely on general goodwill rather than specific equity tools when I encounter inequity in practice.",reverse:true},
+  {dim:"courage",s:"I feel equipped to raise a DEI concern within a formal institutional setting."},
+  {dim:"courage",s:"I can advocate for equity even when it is inconvenient, unpopular or risks my standing in the room."}
+];
+const DIMENSIONS = [
+  {id:"inclusion",label:"Inclusion Mindset",icon:"🤝",color:C.blue},
+  {id:"bias",label:"Bias Awareness",icon:"🔍",color:C.purple},
+  {id:"empathy",label:"Empathy",icon:"❤️",color:C.pink},
+  {id:"ubuntu",label:"Ubuntu / Community",icon:"🌍",color:C.green},
+  {id:"leadership",label:"Leadership Readiness",icon:"🧭",color:C.gold},
+  {id:"action",label:"Action Confidence",icon:"⚡",color:C.red}
+];
+const PSYCH_Q7 = [
+  {dim:"inclusion",s:"I actively create space for people whose perspectives differ from my own."},
+  {dim:"inclusion",s:"I notice when someone is excluded from a conversation or decision, even if I am not directly involved."},
+  {dim:"inclusion",s:"I believe diverse perspectives make decisions and institutions stronger, not just more complicated."},
+  {dim:"bias",s:"I can identify at least one personal bias that has influenced a decision I made this year."},
+  {dim:"bias",s:"I regularly question my first impression of people before acting on it."},
+  {dim:"bias",s:"I don't need to examine my own biases because I treat everyone the same.",reverse:true},
+  {dim:"empathy",s:"I can sit with someone's pain or frustration without rushing to fix or minimise it."},
+  {dim:"empathy",s:"I try to understand a situation from the perspective of the person most affected before forming an opinion."},
+  {dim:"empathy",s:"When someone shares a difficult experience, I notice it affects my own emotions, not just my thinking."},
+  {dim:"ubuntu",s:"I believe my wellbeing is connected to the wellbeing of my community."},
+  {dim:"ubuntu",s:"I see equity work as a collective responsibility rather than an individual achievement."},
+  {dim:"ubuntu",s:"I actively contribute time or resources to support people outside my immediate circle."},
+  {dim:"leadership",s:"I feel equipped to name an inequitable behaviour when I see it, even if it is uncomfortable."},
+  {dim:"leadership",s:"I can distinguish between genuine safety concerns and discomfort in a difficult conversation."},
+  {dim:"leadership",s:"Others come to me when they need guidance on equity or fairness issues."},
+  {dim:"action",s:"I have taken concrete action, not just held an opinion, on a DEI issue in the past 3 months."},
+  {dim:"action",s:"I know what specific next step I would take if I witnessed discrimination in my workplace or school."},
+  {dim:"action",s:"I am confident I can sustain DEI advocacy even when it is met with resistance."}
+];
+
+const CHEERS = ["Correct! Sharp thinking.","Correct! You are building real practitioner judgement.","Correct! That is exactly the equity lens.","Correct! Africa needs leaders who see this clearly.","Correct! Knowledge in action."];
+const GROWTH = ["Not yet — and this is where learning happens.","Not yet — read the insight below; it will return.","Not yet — every expert missed this once.","Not yet — the explanation below is the real prize.","Not yet — adjust the lens and keep moving."];
+const cheer = ()=>CHEERS[Math.floor(Math.random()*CHEERS.length)];
+const growth = ()=>GROWTH[Math.floor(Math.random()*GROWTH.length)];
+
+const UI = {
+  begin:"BEGIN THE JOURNEY →", next:"NEXT →", done:"ZONE COMPLETE ✓", correct:"Correct!", wrong:"Not quite",
+  map:"Journey Map", claim:"🏆 VIEW FINAL REPORT", again:"Play Again", name:"Enter your name...",
+  awarded:"Awarded to", knowledge:"KNOWLEDGE", scenario:"SCENARIO", tf:"TRUE / FALSE",
+  restart:"Start Fresh — Stronger", noLives:"Out of lives — not out of potential. Every attempt sharpens you.", score:"Score",
+  certBody:"Completed the RUZIVO DEI Knowledge Challenge and demonstrated knowledge, reflection and readiness for inclusive leadership.",
+  psychSub:"No right or wrong — just honest reflection",
+  likert:["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"],
+  knowledgeAch:"Knowledge Achievement", practitioner:"Practitioner Readiness", deiProfile:"DEI Profile",
+  nextStep:"Recommended ALP Next Step", strength:"Strength",
+  register:"Tell Us About Yourself", country:"Your Country / Region", org:"Your Organisation", role:"Your Role",
+  startZone:"I'm Ready — Start Zone →", skipConcept:"Skip — I know this →", keyLearning:"Key Learning Before You Play",
+  meTitle:"M&E Dashboard", meTotalPlayers:"Players", meCountries:"Countries", meOrgs:"Organisations",
+  meRecent:"Recent Players", meNoData:"No player data yet. Share RUZIVO!",
+  hint:"💡 Hint (-5pts)", hintUsed:"Hint", zoneComplete:"Zone Complete!", continueJourney:"Continue Journey →",
+  bossLevel:"⚡ BOSS LEVEL", bossDesc:"Hardest question in the zone — take your time.",
+  timesUp:"⏱️ Time's up!", lbTitle:"🏆 Leaderboard", lbNoData:"No scores yet — be the first!"
+};
+
+/* ---------- state ---------- */
+let S = {
+  screen:"intro", name:"", nameInput:"", country:"", org:"", role:"",
+  zone:1, zoneQs:[], qIdx:0, score:0, lives:3, sel:null, shown:false,
+  done:[], hits:0, streak:0, best:0, zStart:0, zScores:{}, tapLogo:0, adminPIN:"",
+  z5Idx:0, z5Ans:[], z5Profile:null, z7Idx:0, z7Ans:[], z7Profile:null,
+  conceptZone:null, mePlayers:[], meLoading:false, zoneCompleteData:null,
+  hintUsed:false, hintText:"", timeLeft:30, timedOut:false, wrongAnswers:[],
+  certLoading:false,
+  passed:[], zHits:{}, zQTotal:{}, zAttempts:{}, capstonePassed:false,
+  flipped:{}, preSelf:0, postSelf:0, startedAt:Date.now(), postSent:false, sound:true
+};
+let timerRef = null;
+let picking = false;
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function cur(){ return S.zoneQs[S.qIdx]; }
+function zData(){ return ZONES.find(z=>z.id===S.zone); }
+function total(){ return Q.filter(q=>q.z!==8).length; }
+function pct(){ return Math.round((S.hits/total())*100); }
+function isBoss(){ return cur() && cur().p >= 30; }
+function adminOk(){ return S.adminPIN === CONFIG.ADMIN_PIN; }
+
+function computeProfile(answers, dims, questions){
+  const buckets={}; dims.forEach(d=>buckets[d.id]=[]);
+  questions.forEach((q,i)=>{ let v=answers[i]||3; if(q.reverse) v=6-v; buckets[q.dim].push(v); });
+  const scores={}; dims.forEach(d=>{ const a=buckets[d.id]; scores[d.id]=Math.round(((a.reduce((x,y)=>x+y,0)/a.length-1)/4)*100); });
+  const overall=Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/dims.length);
+  const strongest=dims.reduce((best,d)=>scores[d.id]>scores[best.id]?d:best,dims[0]);
+  return {scores, overall, strongest};
+}
+function toolkitLevel(o){
+  if(o<40) return {level:"Emerging Practitioner 🌱", desc:"You are building your practitioner foundation, awareness is the first tool.", alp:"Start a 4-week equity reflection journal."};
+  if(o<65) return {level:"Developing Practitioner 📚", desc:"You have a growing toolkit and are beginning to apply it in real contexts.", alp:"Design and pilot a classroom or community intervention."};
+  if(o<85) return {level:"Skilled Practitioner ⭐", desc:"You deploy equity tools with confidence and facilitate across difference.", alp:"Deploy RUZIVO in your school or ward, train 3–5 peer facilitators."};
+  return {level:"Expert Practitioner 🏆", desc:"You are equipped to train others, design DEI systems and lead institutional change.", alp:"Contribute to a PGCN position paper or propose a curriculum module to MoPSE."};
+}
+function deiProfileLabel(o){
+  if(o<40) return {profile:"Inclusive Thinker 🌱", tagline:"You are building awareness, the essential first step toward equity practice.", alp:"Keep a bias journal and attend one community DEI dialogue."};
+  if(o<65) return {profile:"Equity Practitioner 📚", tagline:"You apply DEI knowledge into real, deliberate action.", alp:"Deploy RUZIVO with a community group and bring it back to your PGCN or TFZ network."};
+  if(o<85) return {profile:"Community Change Leader ⭐", tagline:"You lead change within your community and bring others with you.", alp:"Train 5 peer DEI facilitators in your district and present at a network event."};
+  return {profile:"Systems Transformation Champion 🏆", tagline:"You are positioned to drive systemic, institutional change.", alp:"Contribute to PGCN's Annual State of Gender Equality Report or submit a policy brief."};
+}
+
+/* ---------- backend / M&E ---------- */
+async function savePlayer(deiProf){
+  const data = {
+    timestamp:new Date().toISOString(), name:S.name, country:S.country,
+    organisation:(S.org||"N/A")+(S.role?" · "+S.role:""),
+    zone:"Zones "+S.done.length+"/8 · Badges "+S.passed.length+(S.capstonePassed?" · CAPSTONE ★":""),
+    score:S.score, badge:(deiProf&&deiProf.profile)||"—",
+    assessment:pct()+"% accuracy · "+((S.z5Profile&&S.z5Profile.level)||"—")+" · Self baseline "+(S.preSelf||"—")+"/5 · ID "+certId(),
+    duration:Math.round((Date.now()-S.startedAt)/60000)+" min",
+    device:/Mobi|Android/i.test(navigator.userAgent)?"Mobile":"Desktop",
+    org:S.org, role:S.role, pct:pct(), deiProfile:(deiProf&&deiProf.profile)||"—",
+    practitionerLevel:(S.z5Profile&&S.z5Profile.level)||"—", zonesCompleted:S.done.length
+  };
+  if(CONFIG.API_URL){
+    try{
+      await fetch(CONFIG.API_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(data)});
+    }catch(e){ console.warn("Backend save failed, falling back to local storage.", e); }
+  }
+  try{
+    const local = JSON.parse(localStorage.getItem("ruzivo_players")||"[]");
+    local.push(data);
+    localStorage.setItem("ruzivo_players", JSON.stringify(local));
+  }catch(e){}
+}
+
+async function loadME(){
+  S.meLoading = true; render();
+  let players = [];
+  if(CONFIG.API_URL){
+    try{
+      const res = await fetch(CONFIG.API_URL + "?action=list");
+      const json = await res.json();
+      if(json.ok) players = json.players.map(p=>({...p, score:Number(p.score)||0, pct:Number(p.pct)||0}));
+    }catch(e){ console.warn("Backend fetch failed, showing local data only.", e); }
+  }
+  if(players.length===0){
+    try{ players = JSON.parse(localStorage.getItem("ruzivo_players")||"[]"); }catch(e){}
+  }
+  S.mePlayers = players.sort((a,b)=> new Date(b.timestamp)-new Date(a.timestamp));
+  S.meLoading = false;
+  render();
+}
+
+/* ---------- certificate: PGCN dark unified style (Climate Trivia format) ---------- */
+function certId(){
+  let h=0; const s=(S.name||"")+"|"+S.startedAt;
+  for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; }
+  return "RZV-"+h.toString(36).toUpperCase().padStart(7,"0").slice(0,7);
+}
+function buildCert(){
+  const W=1200,H=860;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d');
+
+  // dark green-navy base with soft radial glow (Climate Trivia palette)
+  const bg=ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,"#102019"); bg.addColorStop(.5,"#0e241b"); bg.addColorStop(1,"#0b1a14");
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  const glow=ctx.createRadialGradient(W/2,300,0,W/2,300,620);
+  glow.addColorStop(0,"rgba(39,174,96,0.16)"); glow.addColorStop(1,"rgba(39,174,96,0)");
+  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+
+  // green double frame
+  ctx.strokeStyle="#27AE60"; ctx.lineWidth=6; ctx.strokeRect(14,14,W-28,H-28);
+  ctx.strokeStyle="rgba(39,174,96,.35)"; ctx.lineWidth=1.5; ctx.strokeRect(30,30,W-60,H-60);
+
+  // globe :- Africa-facing, from the Climate Trivia identity
+  if(GLOBE_IMG.complete && GLOBE_IMG.naturalWidth>0){
+    ctx.drawImage(GLOBE_IMG, W/2-31, 26, 62, 62);
+  }
+
+  // header :- tri-colour network name
+  ctx.textAlign="center";
+  ctx.font="bold 15px Arial";
+  const hdr=[["PEACE","#4A90D9"],[" · ","#8aa"],["GENDER","#9B59B6"],[" · ","#8aa"],["CLIMATE NETWORK","#27AE60"]];
+  let hw=0; hdr.forEach(p=>hw+=ctx.measureText(p[0]).width);
+  let hx=W/2-hw/2;
+  hdr.forEach(p=>{ ctx.textAlign="left"; ctx.fillStyle=p[1]; ctx.fillText(p[0],hx,112); hx+=ctx.measureText(p[0]).width; });
+  ctx.textAlign="center";
+  ctx.fillStyle="rgba(255,255,255,.75)"; ctx.font="11px Arial";
+  ctx.fillText("PGCN  ·  EGSI CERTIFIED 2026  ·  RUZIVO DEI KNOWLEDGE CHALLENGE", W/2, 134);
+
+  // title
+  ctx.fillStyle="#ffffff"; ctx.font='bold 44px "Times New Roman", Georgia, serif';
+  ctx.fillText("CERTIFICATE OF COMPLETION", W/2, 190);
+
+  // accuracy ring (signature Climate Trivia element)
+  const cx=W/2, cy=310, R=95;
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.strokeStyle="rgba(39,174,96,.25)"; ctx.lineWidth=10; ctx.stroke();
+  const frac=Math.max(0,Math.min(1,pct()/100));
+  ctx.beginPath(); ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+frac*Math.PI*2);
+  ctx.strokeStyle="#27AE60"; ctx.lineWidth=10; ctx.lineCap="round"; ctx.stroke();
+  ctx.fillStyle="#27AE60"; ctx.font="bold 56px Arial";
+  ctx.fillText(pct()+"%", cx, cy+8);
+  ctx.fillStyle="rgba(255,255,255,.8)"; ctx.font="16px Arial";
+  ctx.fillText(S.score+" pts", cx, cy+40);
+
+  // name in PGCN gold
+  ctx.fillStyle="#F5A623"; ctx.font='bold 46px "Times New Roman", Georgia, serif';
+  ctx.fillText(S.name || "Participant", W/2, 475);
+
+  // context lines
+  ctx.fillStyle="rgba(255,255,255,.92)"; ctx.font="16px Arial";
+  ctx.fillText("has successfully completed the RUZIVO DEI Knowledge Challenge and demonstrated", W/2, 508);
+  ctx.fillText("knowledge, reflection and readiness for inclusive leadership.", W/2, 530);
+
+  const lvl=(S.z5Profile&&(S.z5Profile.level||"").replace(/[^\w\s]/g,"").trim())||"";
+  const prof=(S.z7Profile&&(S.z7Profile.profile||"").replace(/[^\w\s]/g,"").trim())||"";
+  const capstone=S.capstonePassed?"★ INTEGRATED MASTERY — ZVOSE CAPSTONE":"";
+  if(capstone){ ctx.fillStyle="#F5A623"; ctx.font='bold 15px "Times New Roman", Georgia, serif'; ctx.fillText(capstone, W/2, 562); }
+  ctx.fillStyle="rgba(255,255,255,.82)"; ctx.font="14px Arial";
+  ctx.fillText([lvl,prof].filter(Boolean).join("  ·  "), W/2, capstone?590:562);
+  ctx.fillText(`${S.country||""}${S.country&&S.org?" · ":""}${S.org||""}${S.role?" · "+S.role:""}  ·  ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`, W/2, S.capstonePassed?614:586);
+
+  // Peace / Gender / Climate dots
+  const dots=[["Peace","#4A90D9"],["Gender","#9B59B6"],["Climate","#27AE60"]];
+  dots.forEach((d,i)=>{
+    const dx=W/2+(i-1)*170;
+    ctx.beginPath(); ctx.arc(dx,656,9,0,Math.PI*2); ctx.fillStyle=d[1]; ctx.fill();
+    ctx.fillStyle=d[1]; ctx.font="12px Arial"; ctx.fillText(d[0],dx,684);
+  });
+
+  // issuer block :- handwritten signature above the line, printed name beneath
+  const sigY=752;
+  if(SIG_IMG.complete && SIG_IMG.naturalWidth>0){
+    const sw=150, sh=sw*(SIG_IMG.naturalHeight/SIG_IMG.naturalWidth);
+    ctx.drawImage(SIG_IMG, 245-sw/2, sigY-sh+4, sw, sh);
+  }
+  ctx.strokeStyle="rgba(255,255,255,.35)"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(110,sigY); ctx.lineTo(380,sigY); ctx.stroke();
+  ctx.fillStyle="#ffffff"; ctx.font="bold 13px Arial";
+  ctx.fillText("Kingdom Gwangwava", 245, sigY+20);
+  ctx.fillStyle="#27AE60"; ctx.font="11px Arial";
+  ctx.fillText("Founder & Executive Director, PGCN", 245, sigY+37);
+
+  ctx.fillStyle="rgba(255,255,255,.75)"; ctx.font="11px Arial";
+  ctx.fillText("Verification :- "+certId(), W/2, sigY+12);
+  ctx.fillText("peacegenderandclimatenetwork.com · Issued under the EGSI framework", W/2, sigY+30);
+  ctx.fillText("International e-learning standards · 70% certification threshold", W/2, sigY+48);
+
+  ctx.strokeStyle="rgba(255,255,255,.35)";
+  ctx.beginPath(); ctx.moveTo(820,sigY); ctx.lineTo(1090,sigY); ctx.stroke();
+  ctx.fillStyle="#ffffff"; ctx.font="bold 13px Arial";
+  ctx.fillText("EGSI Certification Board", 955, sigY+20);
+  ctx.fillStyle="#4A90D9"; ctx.font="11px Arial";
+  ctx.fillText("Earth Gaming Standards International", 955, sigY+37);
+
+  ctx.fillStyle="rgba(39,174,96,.95)"; ctx.font="11px Arial";
+  ctx.fillText("Create | Initiate | Innovate | Leaving No One Behind", W/2, 828);
+  return cv;
+}
+
+/* ---------- game logic ---------- */
+function startTimer(){
+  clearInterval(timerRef); S.timeLeft=30; S.timedOut=false;
+  timerRef = setInterval(()=>{
+    S.timeLeft = Math.max(0, S.timeLeft-1);
+    if(S.timeLeft===0 && !S.shown && !picking){
+      clearInterval(timerRef); picking=true; S.shown=true; S.timedOut=true;
+      S.lives=Math.max(0,S.lives-1); S.streak=0;
+      const q=cur(); const corr = q.t==="tf" ? (q.a?"TRUE ✓":"FALSE ✗") : q.o[q.a];
+      S.wrongAnswers.push({q:q.q, correct:corr, your:UI.timesUp, exp:q.e});
+    }
+    render();
+  },1000);
+}
+
+function launchZone(zId){
+  const zInfo = ZONES.find(z=>z.id===zId);
+  S.wrongAnswers=[];
+  if(zInfo.type==="toolkit"){ S.z5Idx=0; S.z5Ans=[]; picking=false; S.screen="toolkit"; }
+  else{
+    if(zId===8){ S.zoneQs = shuffle([ ...Q.filter(q=>q.z===8), ...shuffle(Q.filter(q=>q.z!==8)).slice(0,6) ]); }
+    else{ S.zoneQs = shuffle(Q.filter(q=>q.z===zId)); }
+    S.zAttempts[zId]=(S.zAttempts[zId]||0)+1; S.zHits[zId]=0; S.zQTotal[zId]=S.zoneQs.length;
+    S.zone=zId; S.qIdx=0; S.sel=null; S.shown=false;
+    S.hintUsed=false; S.hintText=""; S.timedOut=false; S.zStart=S.score; S.screen="game";
+    startTimer();
+  }
+  render();
+}
+function startZone(zId){
+  const zInfo = ZONES.find(z=>z.id===zId);
+  if(zInfo.type==="psychometric"){ S.z7Idx=0; S.z7Ans=[]; picking=false; S.screen="psychometric"; }
+  else{ S.conceptZone=zId; S.screen="concept"; }
+  render();
+}
+function pick(i){
+  if(S.shown || picking) return;
+  clearInterval(timerRef); picking=true; S.sel=i; S.shown=true; S.timedOut=false;
+  const q=cur(); const ok = q.t==="tf" ? (i===0)===q.a : i===q.a;
+  if(ok){
+    sndCorrect();
+    const b=S.streak>=2?5:0; S.score+=q.p+b;
+    if(S.zone!==8) S.hits++;
+    S.zHits[S.zone]=(S.zHits[S.zone]||0)+1;
+    S.streak++; S.best=Math.max(S.best,S.streak);
+  }else{
+    sndWrong();
+    S.lives=Math.max(0,S.lives-1); S.streak=0;
+    const corr = q.t==="tf" ? (q.a?"TRUE ✓":"FALSE ✗") : q.o[q.a];
+    S.wrongAnswers.push({q:q.q, correct:corr, your:q.o?q.o[i]:(i===0?"TRUE ✓":"FALSE ✗"), exp:q.e});
+  }
+  render();
+}
+function nextQ(){
+  clearInterval(timerRef); picking=false; S.hintUsed=false; S.hintText="";
+  if(S.qIdx+1 < S.zoneQs.length){
+    S.qIdx++; S.sel=null; S.shown=false; S.timedOut=false; startTimer();
+  }else{
+    const earned = S.score - S.zStart;
+    S.zScores[S.zone]=earned;
+    const zTot=S.zQTotal[S.zone]||S.zoneQs.length, zH=S.zHits[S.zone]||0;
+    const zPct=Math.round((zH/zTot)*100), zPassed=zPct>=70;
+    if(zPassed && !S.passed.includes(S.zone)) S.passed.push(S.zone);
+    if(S.zone===8 && zPassed){ S.capstonePassed=true; sndMastery(); } else if(zPassed){ sndZonePass(); }
+    S.zoneCompleteData={zoneId:S.zone, score:earned, zPct, zPassed, attempt:S.zAttempts[S.zone]||1};
+    S.screen = S.wrongAnswers.length>0 ? "wrongreview" : "zonecomplete";
+  }
+  render();
+}
+function useHint(){
+  if(S.hintUsed) return;
+  S.hintUsed=true; S.score=Math.max(0,S.score-5);
+  S.hintText=(cur().e||"").split(".")[0]+"...";
+  render();
+}
+function pickLikert(val,type){
+  if(picking) return; picking=true;
+  if(type==="toolkit"){
+    S.z5Ans[S.z5Idx]=val;
+    setTimeout(()=>{
+      picking=false;
+      if(S.z5Idx+1<PSYCH_Q5.length){ S.z5Idx++; }
+      else{
+        const r=computeProfile(S.z5Ans,PRACTITIONER_DIMS,PSYCH_Q5);
+        S.z5Profile={...r, ...toolkitLevel(r.overall)};
+        if(!S.done.includes(5)) S.done.push(5);
+        S.screen="map";
+      }
+      render();
+    },200);
+  }else{
+    S.z7Ans[S.z7Idx]=val;
+    setTimeout(()=>{
+      picking=false;
+      if(S.z7Idx+1<PSYCH_Q7.length){ S.z7Idx++; }
+      else{
+        const r=computeProfile(S.z7Ans,DIMENSIONS,PSYCH_Q7);
+        const prof={...r, ...deiProfileLabel(r.overall)};
+        S.z7Profile=prof;
+        if(!S.done.includes(7)) S.done.push(7);
+        savePlayer(prof);
+        S.screen="report";
+      }
+      render();
+    },200);
+  }
+  render();
+}
+function resetAll(){
+  S.score=0; S.lives=3; S.done=[]; S.hits=0; S.streak=0; S.best=0; S.zScores={};
+  S.z5Profile=null; S.z7Profile=null; S.certLoading=false; S.zoneQs=[]; S.wrongAnswers=[];
+  S.passed=[]; S.zHits={}; S.zQTotal={}; S.zAttempts={}; S.capstonePassed=false;
+  S.flipped={}; S.postSelf=0; S.postSentVal=0; S.startedAt=Date.now();
+  clearInterval(timerRef);
+}
+
+/* ---------- render helpers ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function livesHtml(){ return S.lives>0 ? "❤️".repeat(S.lives) : "💀"; }
+
+function contactBox(){
+  return `<div class="contact-box"><p style="color:rgba(255,255,255,.75);font-weight:bold;">📞 Kingdom Gwangwava · PGCN</p><p style="color:${C.gold};">pgcnglobal@gmail.com · +263 71 980 2319</p></div>`;
+}
+function supportBox(){
+  return `<div class="support-box">
+    <p style="color:${C.gold};font-size:13px;font-weight:bold;margin-bottom:4px;">💛 Support PGCN</p>
+    <p style="color:rgba(255,255,255,.8);font-size:11px;line-height:1.5;">RUZIVO is free for every learner. Your contribution keeps it free and grows the Peace, Gender and Climate mission.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;">
+      <span class="pay-chip">OMari</span><span class="pay-chip">OneMoney</span><span class="pay-chip">InnBucks</span>
+    </div>
+    <p style="color:#fff;font-size:14px;font-weight:bold;margin-top:7px;letter-spacing:.5px;">+263 71 980 2319</p>
+    <p style="color:rgba(255,255,255,.7);font-size:10px;margin-top:3px;">pgcnglobal@gmail.com · Kingdom Gwangwava</p>
+    <p style="color:${C.green};font-size:9px;margin-top:5px;">Create | Initiate | Innovate | Leaving No One Behind</p>
+  </div>`;
+}
+function footerNote(t){ return `<p class="footer-note">${t}</p>`; }
+
+function screenIntro(){
+  return `
+  <div class="screen center">
+    <div class="maxw">
+      <div onclick="S.tapLogo++;render()" style="font-size:50px;margin-bottom:5px;cursor:pointer;">🌍</div>
+      <p class="eyebrow">Peace, Gender and Climate Network</p>
+      <h1>RUZIVO</h1>
+      <p class="sub">DEI Knowledge Challenge</p>
+      <p style="color:rgba(255,255,255,.8);font-size:12px;line-height:1.55;margin:6px 0 8px;">Learn. Play. <b style="color:${C.gold};">Get certified.</b> Eight zones of African-grounded equity knowledge :- from Ubuntu to climate justice :- ending in an earned, verifiable EGSI credential.</p>
+      <p style="color:rgba(255,255,255,.2);font-size:9px;margin-bottom:3px;">PGCN · TFZ · AIIDEV · ZOU · MBIMB · IEP · UNDP · 2026</p>
+      <p class="tag">⬡ EGSI CERTIFIED 2026</p>
+      ${S.tapLogo>=5?`
+        <div style="margin-bottom:10px;padding:12px;border-radius:12px;background:rgba(0,0,0,.5);border:1px solid ${C.gold}44;">
+          <p style="color:${C.gold};font-size:10px;margin-bottom:5px;">🔐 Admin PIN</p>
+          <input id="adminPinInput" value="${esc(S.adminPIN)}" aria-label="Admin PIN" placeholder="PGCN2026" oninput="S.adminPIN=this.value" style="text-align:center;"/>
+          ${adminOk()?`<div style="display:flex;gap:6px;margin-top:6px;justify-content:center;">
+            <button class="btn" style="width:auto;background:${C.teal};color:#fff;padding:6px 12px;font-size:10px;" onclick="loadME();S.screen='me';render()">📊 M&E</button>
+            <button class="btn" style="width:auto;padding:6px 12px;font-size:10px;" onclick="loadME();S.screen='leaderboard';render()">🏆 Leaderboard</button>
+          </div>`:""}
+        </div>`:""}
+      <div class="zones-grid">
+        ${ZONES.map(z=>`<div class="zone-chip" style="background:${z.color}15;border:1px solid ${z.color}33;"><div class="ic">${z.icon}</div><p style="color:${z.color};">${z.tag}</p></div>`).join("")}
+      </div>
+      <div class="feature-row"><div class="feature-grid">
+        ${[["📖","Learn First",C.blue],["⏱️","30s Timer",C.orange],["🔍","Review Missed",C.purple],["🏆","Leaderboard",C.gold]]
+          .map(([i,l,c])=>`<div><p style="font-size:14px;">${i}</p><p style="color:${c};">${l}</p></div>`).join("")}
+      </div></div>
+      <input id="nameInput" value="${esc(S.nameInput)}" aria-label="${UI.name}" autocomplete="name" placeholder="${UI.name}" oninput="S.nameInput=this.value" />
+      <button class="btn" onclick="const v=document.getElementById('nameInput').value.trim(); if(v){S.name=v;S.screen='register';render();}">${UI.begin}</button>
+      ${supportBox()}
+    ${contactBox()}
+      <p style="color:rgba(255,255,255,.55);font-size:9px;margin-top:6px;">Create · Initiate · Innovate · Leaving No One Behind</p>
+    </div>
+  </div>`;
+}
+
+function screenRegister(){
+  return `
+  <div class="screen center">
+    <div class="maxw">
+      <p style="color:${C.gold};font-size:22px;">👋</p>
+      <p class="eyebrow">Welcome, ${esc(S.name)}</p>
+      <h2 style="font-size:17px;font-weight:900;margin-bottom:3px;">${UI.register}</h2>
+      <p style="color:rgba(255,255,255,.7);font-size:10px;margin-bottom:14px;">This helps PGCN track reach and impact across contexts.</p>
+      <div style="text-align:left;">
+        <label for="countryInput" class="field-label">${UI.country} *</label>
+        <input id="countryInput" value="${esc(S.country)}" autocomplete="country-name" placeholder="e.g. Zimbabwe, Bolivia, France..." oninput="S.country=this.value;updateBeginBtn()" style="margin-bottom:8px;"/>
+        <label for="orgSelect" class="field-label">${UI.org}</label>
+        <select id="orgSelect" onchange="S.org=this.value" style="margin-bottom:8px;">
+          <option value="">Select organisation...</option>
+          ${ORGS.map(o=>`<option ${S.org===o?'selected':''}>${esc(o)}</option>`).join("")}
+        </select>
+        <label for="roleSelect" class="field-label">${UI.role}</label>
+        <select id="roleSelect" onchange="S.role=this.value">
+          <option value="">Select role...</option>
+          ${ROLES.map(r=>`<option ${S.role===r?'selected':''}>${esc(r)}</option>`).join("")}
+        </select>
+      </div>
+      <div style="text-align:left;margin-top:10px;">
+        <p class="field-label">Baseline Self-Assessment</p>
+        <p style="color:rgba(255,255,255,.65);font-size:10px;margin-bottom:5px;">Rate your current DEI knowledge :- 1 = new to this, 5 = expert. Your learning gain is measured at the end.</p>
+        <div style="display:flex;gap:7px;justify-content:center;margin-bottom:4px;">${[1,2,3,4,5].map(n=>`<button class="selfbtn ${S.preSelf===n?'active':''}" aria-label="Rate ${n} of 5" onclick="S.preSelf=${n};render()">${n}</button>`).join("")}</div>
+      </div>
+      <button id="beginBtn" class="btn" ${S.country.trim()?'':'disabled style="opacity:.4;"'} onclick="S.screen='map';render()">${UI.begin}</button>
+      <button class="btn ghost" onclick="S.screen='map';render()">Skip registration →</button>
+    </div>
+  </div>`;
+}
+
+function screenConcept(){
+  const zInfo = ZONES.find(z=>z.id===S.conceptZone);
+  const concepts = ZONE_CONCEPTS[S.conceptZone]||[];
+  return `
+  <div class="screen" style="padding:0;">
+    <div class="topbar"><div><p style="color:${zInfo.color};font-size:10px;font-weight:bold;">${zInfo.icon} ${zInfo.name}</p><p style="color:rgba(255,255,255,.7);font-size:9px;">${UI.keyLearning}</p></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 18px;">
+      <div style="text-align:center;margin-bottom:12px;"><p style="font-size:28px;margin-bottom:4px;">${zInfo.icon}</p><h2 style="font-size:17px;font-weight:900;margin-bottom:3px;">${zInfo.name}</h2><p style="color:${zInfo.color};font-size:9px;">${zInfo.sub}</p></div>
+      ${(ZONE_OBJECTIVES[S.conceptZone]||[]).length?`<div class="concept-card" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.18);"><p class="ck" style="color:#fff;">🎯 Learning Objectives</p><p class="cv" style="color:rgba(255,255,255,.7);">By the end of this module you will be able to:</p>${ZONE_OBJECTIVES[S.conceptZone].map(o=>`<p class="cv">• ${o}</p>`).join("")}</div>`:''}
+      ${concepts.map(c=>`<div class="concept-card" style="background:linear-gradient(135deg,${zInfo.color}14,${zInfo.color}06);border:1px solid ${zInfo.color}35;"><p class="ck" style="color:${zInfo.color};">💡 ${esc(c.k)}</p><p class="cv">${esc(c.v)}</p></div>`).join("")}
+      ${(FLIP_CARDS[S.conceptZone]||[]).length?`<p style="color:${zInfo.color};font-size:11px;font-weight:bold;margin:8px 0 6px;">🔄 Practice Scenarios :- tap a card to flip (ungraded)</p>`:''}
+      ${(FLIP_CARDS[S.conceptZone]||[]).map((c,i)=>{const k=S.conceptZone+"_"+i, f=S.flipped[k];
+        return `<div class="flip-wrap ${f?'flipped':''}" role="button" tabindex="0" aria-pressed="${!!f}" onclick="sndFlip();S.flipped['${k}']=!S.flipped['${k}'];render()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();S.flipped['${k}']=!S.flipped['${k}'];render()}">
+          <div class="flip-inner">
+            <div class="flip-face" style="border:1px solid ${zInfo.color}45;background:${zInfo.color}12;"><p class="ck" style="color:${zInfo.color};">🎬 Scenario</p><p class="cv">${esc(c.s)}</p><p style="color:rgba(255,255,255,.55);font-size:9px;margin-top:6px;">Tap to reveal the equity-aligned response →</p></div>
+            <div class="flip-face flip-back" style="border:1px solid ${zInfo.color};background:#0d2018;"><p class="ck" style="color:${zInfo.color};">✅ Equity-Aligned Response</p><p class="cv">${esc(c.a)}</p><p class="cv" style="color:rgba(255,255,255,.7);margin-top:5px;">${esc(c.e)}</p></div>
+          </div>
+        </div>`;}).join("")}
+    </div>
+    <div style="padding:10px 16px 22px;">
+      <button class="btn" style="background:${zInfo.color};" onclick="launchZone(${S.conceptZone})">${UI.startZone}</button>
+      <button class="btn ghost" onclick="launchZone(${S.conceptZone})">${UI.skipConcept}</button>
+    </div>
+  </div>`;
+}
+
+function screenMap(){
+  const allKnDone = [1,2,3,4,5,6].every(id=>S.done.includes(id));
+  return `
+  <div class="screen" style="padding:14px 14px 32px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+      <div><p class="eyebrow">RUZIVO · ${esc(S.name)}</p><p style="font-weight:900;font-size:22px;">${S.score} pts</p><p style="color:rgba(255,255,255,.7);font-size:10px;">${S.hits}/${total()} correct ${S.country?('· '+esc(S.country)):''}</p></div>
+      <div style="text-align:right;"><p class="lives">${livesHtml()}</p>
+        <button class="btn" style="width:auto;background:${C.gold}22;border:1px solid ${C.gold}44;color:${C.gold};padding:4px 10px;font-size:9px;margin-top:4px;" onclick="loadME();S.screen='leaderboard';render()">🏆 Leaderboard</button>
+      </div>
+    </div>
+    <p style="font-weight:bold;font-size:15px;margin-bottom:8px;">${UI.map}</p>
+    ${ZONES.map((z,i)=>{
+      const isDone=S.done.includes(z.id), isLocked=!adminOk()&&i>0&&!S.done.includes(z.id-1), isActive=!isDone&&!isLocked, isSpecial=z.type==="toolkit"||z.type==="psychometric";
+      return `<button class="zonebtn ${isDone?'done':isLocked?'locked':'active'}" style="background:${isDone?z.color+'22':isActive?z.color+'12':'rgba(255,255,255,.03)'};border-color:${isDone?z.color:isActive?z.color+'55':'rgba(255,255,255,.05)'};" ${isActive?`onclick="startZone(${z.id})"`:''}>
+        <div class="zone-icon" style="background:${z.color}22;">${isDone?'✅':isLocked?'🔒':z.icon}</div>
+        <div class="zone-info"><p class="zlabel" style="color:${z.color};">Zone ${z.id} · ${z.tag}${isSpecial?' · No Right/Wrong':''}</p><p class="zname">${z.name}</p><p class="zsub">${z.sub}</p></div>
+        <div class="zone-right">${isDone?`<p class="zscore" style="color:${z.color};">${!isSpecial?('+'+(S.zScores[z.id]||0)+'pts'+(S.passed.includes(z.id)?' 🎖':'')):'✓'}</p>`:''}${isActive?`<p style="color:${z.color};font-size:10px;font-weight:bold;">START →</p>`:''}<p class="zcount">${!isSpecial?(z.id===8?'8 + 6 mixed':Q.filter(q=>q.z===z.id).length+' Qs'):(z.id===5?PSYCH_Q5.length:PSYCH_Q7.length)+' items'}</p></div>
+      </button>`;
+    }).join("")}
+    ${allKnDone?`<button class="btn" onclick="startZone(7)">🧭 Complete DEI Profile → View Final Report</button>`:''}
+    ${S.done.includes(7)?`<button class="btn" style="background:${C.teal};color:#fff;" onclick="S.screen='report';render()">${UI.claim}</button>`:''}
+    ${(S.lives===0&&!allKnDone)?`<div style="margin-top:12px;padding:12px;border-radius:12px;background:#c0392b18;border:1px solid #c0392b55;text-align:center;"><p style="font-weight:bold;margin-bottom:7px;">${UI.noLives}</p><button class="btn" style="width:auto;padding:7px 18px;" onclick="resetAll();render()">${UI.restart}</button></div>`:''}
+    ${footerNote("PGCN · EGSI Certified · pgcnglobal@gmail.com")}
+  </div>`;
+}
+
+function screenZoneComplete(){
+  const z = ZONES.find(zz=>zz.id===S.zoneCompleteData.zoneId);
+  return `
+  <div class="screen center" style="position:relative;overflow:hidden;">
+    <div id="confettiHost"></div>
+    <div style="max-width:360px;text-align:center;z-index:10;">
+      <div style="font-size:60px;margin-bottom:10px;">${z.icon}</div>
+      <p style="color:${z.color};font-size:10px;font-weight:bold;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;">Zone ${z.id} · ${z.tag}</p>
+      <h2 style="font-weight:900;font-size:26px;margin-bottom:6px;">${UI.zoneComplete}</h2>
+      <p style="color:rgba(255,255,255,.6);font-size:13px;margin-bottom:14px;">${z.name}</p>
+      <div style="border-radius:18px;padding:16px 28px;background:${z.color}25;border:2px solid ${z.color};margin-bottom:10px;display:inline-block;">
+        <p style="color:${z.color};font-size:44px;font-weight:900;line-height:1;">+${S.zoneCompleteData.score}</p>
+        <p style="color:rgba(255,255,255,.8);font-size:11px;margin-top:3px;">pts earned · ${S.zoneCompleteData.zPct}% accuracy</p>
+        <p style="color:rgba(255,255,255,.65);font-size:10px;margin-top:5px;">${S.zoneCompleteData.zPassed?'Your judgement is compounding — carry it forward.':'Growth lives in the retake — champions return.'}</p>
+      </div>
+      <p style="color:rgba(255,255,255,.75);font-size:11px;margin-bottom:16px;">${S.score} pts total · ${S.hits}/${total()} correct overall</p>
+      ${S.zoneCompleteData.zPassed
+      ? `<div style="border-radius:12px;padding:10px 14px;background:${C.green}18;border:1px solid ${C.green};margin-bottom:8px;"><p style="color:${C.green};font-size:12px;font-weight:bold;">🎖 Zone Badge Earned ${z.id===8?'· ★ INTEGRATED MASTERY':''}</p><p style="color:rgba(255,255,255,.75);font-size:10px;margin-top:2px;">International certification threshold (70%) met</p></div>`
+      : `<div style="border-radius:12px;padding:10px 14px;background:#c0392b18;border:1px solid #c0392b66;margin-bottom:8px;"><p style="color:#e88;font-size:12px;font-weight:bold;">${S.zoneCompleteData.zPct}% :- below the 70% badge threshold</p><p style="color:rgba(255,255,255,.75);font-size:10px;margin-top:2px;">Attempt ${S.zoneCompleteData.attempt} of 3 · International standard</p>
+        ${S.zoneCompleteData.attempt<3?`<button class="btn" style="width:auto;padding:8px 18px;margin-top:8px;background:${z.color};" onclick="launchZone(${z.id})">🔁 Retake Zone</button>`:`<p style="color:rgba(255,255,255,.6);font-size:9px;margin-top:6px;">Attempts exhausted :- you may continue without this badge.</p>`}</div>`}
+    <button class="btn" style="background:${z.color};" onclick="if(!S.done.includes(${z.id}))S.done.push(${z.id});S.zoneCompleteData=null;S.screen='map';render()">${UI.continueJourney}</button>
+    </div>
+  </div>`;
+}
+
+function screenWrongReview(){
+  const z = ZONES.find(zz=>zz.id===S.zoneCompleteData.zoneId);
+  return `
+  <div class="screen" style="padding:16px 16px 32px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div><p style="color:${z.color};font-size:10px;font-weight:bold;">${z.icon} ${z.name}</p><p style="font-weight:900;font-size:17px;">Review Before Celebrating</p></div>
+      <p style="color:${C.red};font-size:10px;font-weight:bold;">${S.wrongAnswers.length} missed</p>
+    </div>
+    ${S.wrongAnswers.map(w=>`
+      <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);margin-bottom:12px;">
+        <div style="padding:10px 14px;background:rgba(255,255,255,.04);"><p style="color:rgba(255,255,255,.7);font-size:12px;line-height:1.55;">${esc(w.q)}</p></div>
+        <div style="padding:8px 14px;background:${C.red}10;border-top:1px solid ${C.red}33;"><p style="color:${C.red};font-size:10px;font-weight:bold;">✗ ${esc(w.your)}</p></div>
+        <div style="padding:8px 14px;background:${C.green}10;border-top:1px solid ${C.green}33;"><p style="color:${C.green};font-size:10px;font-weight:bold;">✓ ${esc(w.correct)}</p></div>
+        <div style="padding:8px 14px;background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.06);"><p style="color:rgba(255,255,255,.55);font-size:10px;line-height:1.55;">${esc(w.exp)}</p></div>
+      </div>`).join("")}
+    <button class="btn" style="background:${z.color};" onclick="S.wrongAnswers=[];S.screen='zonecomplete';render()">${UI.continueJourney} 🎉</button>
+  </div>`;
+}
+
+function screenGame(){
+  const q = cur(); if(!q) return screenMap();
+  const boss = isBoss(); const cardColor = boss ? C.red : zData().color;
+  const badge = boss ? UI.bossLevel : q.t==="scenario" ? "📋 "+UI.scenario : q.t==="tf" ? "⚡ "+UI.tf : "❓ "+UI.knowledge;
+  const opts = q.t==="tf" ? ["TRUE ✓","FALSE ✗"] : q.o;
+  const timerPct = (S.timeLeft/30)*100;
+  const timerColor = S.timeLeft<=5?C.red:S.timeLeft<=10?C.orange:C.green;
+  return `
+  <div class="screen" style="padding:0;">
+    <div class="topbar">
+      <div><p style="color:${cardColor};font-size:10px;font-weight:bold;">${zData().icon} ${zData().name}</p><p style="color:rgba(255,255,255,.7);font-size:9px;">Q${S.qIdx+1}/${S.zoneQs.length} · ${UI.score}: ${S.score}</p></div>
+      <div style="display:flex;align-items:center;gap:7px;">
+        <div class="timer-ring" style="border:3px solid ${timerColor};background:conic-gradient(${timerColor} ${timerPct}%,rgba(255,255,255,.08) 0%);">
+          <div class="timer-inner" style="color:${timerColor};">${S.timeLeft}</div>
+        </div>
+        ${S.streak>=2?`<span style="font-size:9px;padding:2px 7px;border-radius:20px;font-weight:bold;background:${C.gold}33;color:${C.gold};">🔥×${S.streak}</span>`:''}
+        <span class="lives">${livesHtml()}</span>
+      </div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${((S.qIdx+1)/S.zoneQs.length)*100}%;background:${cardColor};"></div></div>
+    <div style="padding:8px 15px;flex:1;overflow-y:auto;">
+      ${boss?`<div style="border-radius:12px;padding:9px 14px;background:linear-gradient(135deg,${C.red}30,${C.gold}15);border:2px solid ${C.red};margin-bottom:9px;text-align:center;"><p style="color:${C.red};font-weight:900;font-size:13px;letter-spacing:.08em;">⚡ BOSS LEVEL ⚡</p><p style="color:rgba(255,255,255,.8);font-size:10px;">${UI.bossDesc}</p></div>`:''}
+      <div class="qcard" style="background:linear-gradient(135deg,${cardColor}${boss?'25':'16'},${cardColor}06);border:1px solid ${cardColor}${boss?'66':'40'};">
+        <span class="badge" style="background:${cardColor}30;color:${cardColor};">${badge} · +${q.p}pts${(S.streak>=2&&!S.shown)?' +5🔥':''}</span>
+        <p class="qtext">${esc(q.q)}</p>
+      </div>
+      ${opts.map((opt,i)=>{
+        const isAns = q.t==="tf" ? (i===0)===q.a : i===q.a;
+        let bg="rgba(255,255,255,.05)",bd="rgba(255,255,255,.08)",fc="rgba(255,255,255,.8)";
+        if(S.shown){ if(isAns){bg="#27AE6015";bd="#27AE60";fc="#27AE60";} else if(S.sel===i){bg="#c0392b15";bd="#c0392b";fc="#e74c3c";} }
+        else if(S.sel===i){ bg=cardColor+"18"; bd=cardColor; fc="#fff"; }
+        return `<button class="opt" style="background:${bg};border-color:${bd};color:${fc};" onclick="pick(${i})" ${S.shown?'disabled':''}>
+          ${q.t!=="tf"?`<span class="oletter" style="color:${S.shown&&isAns?'#27AE60':S.shown&&S.sel===i?'#e74c3c':cardColor};">${String.fromCharCode(65+i)}.</span>`:''}
+          ${esc(opt)}<span class="oflag">${S.shown&&isAns?'✅':S.shown&&S.sel===i?'❌':''}</span>
+        </button>`;
+      }).join("")}
+      ${(!S.shown&&!S.hintUsed)?`<button class="hint-btn" onclick="useHint()">${UI.hint}</button>`:''}
+      ${(S.hintUsed&&S.hintText&&!S.shown)?`<div style="margin-top:8px;padding:10px;border-radius:10px;background:${C.gold}10;border:1px solid ${C.gold}33;"><p style="color:${C.gold};font-size:9px;font-weight:bold;margin-bottom:3px;">${UI.hintUsed}</p><p style="color:rgba(255,255,255,.6);font-size:11px;line-height:1.5;">${esc(S.hintText)}</p></div>`:''}
+      ${S.shown?`<div class="explain" style="background:${(S.timedOut? '#c0392b12' : (isOk(q)?'#27AE6012':'#c0392b12'))};border:1px solid ${(S.timedOut?'#c0392b40':(isOk(q)?'#27AE6040':'#c0392b40'))};">
+        <p style="color:${S.timedOut?C.red:(isOk(q)?'#27AE60':'#e74c3c')};font-weight:bold;font-size:10px;margin-bottom:4px;">${S.timedOut?UI.timesUp:(isOk(q)?('✅ '+cheer()+' +'+q.p+(S.streak>=3?' +5🔥':'')+'pts'):('🌱 '+growth()))}</p>
+        <p style="color:rgba(255,255,255,.75);font-size:11px;line-height:1.65;">${esc(q.e)}</p>
+      </div>`:''}
+    </div>
+    ${S.shown?`<div style="padding:8px 15px 20px;"><button class="btn" style="background:${cardColor};margin-top:0;" onclick="nextQ()">${S.qIdx+1<S.zoneQs.length?UI.next:UI.done}</button></div>`:''}
+  </div>`;
+}
+function isOk(q){ if(S.sel===null) return null; return q.t==="tf" ? (S.sel===0)===q.a : S.sel===q.a; }
+
+function screenLikert(type){
+  const isTk = type==="toolkit"; const dims = isTk?PRACTITIONER_DIMS:DIMENSIONS; const qs = isTk?PSYCH_Q5:PSYCH_Q7;
+  const idx = isTk?S.z5Idx:S.z7Idx; const q = qs[idx]; const dim = dims.find(d=>d.id===q.dim);
+  return `
+  <div class="screen" style="padding:0;">
+    <div class="topbar"><div><p style="color:${dim.color};font-size:10px;font-weight:bold;">${isTk?'🧰 Practitioner Self-Check':'🧭 DEI Profile Assessment'}</p><p style="color:rgba(255,255,255,.7);font-size:9px;">Statement ${idx+1}/${qs.length}</p></div></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${((idx+1)/qs.length)*100}%;background:${dim.color};"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 18px;">
+      <div class="likert-card" style="background:linear-gradient(135deg,${dim.color}18,${dim.color}06);border:1px solid ${dim.color}40;">
+        <p style="font-size:22px;margin-bottom:5px;">${dim.icon}</p>
+        <p style="color:${dim.color};font-size:9px;font-weight:bold;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;">${dim.label}</p>
+        <p style="color:rgba(255,255,255,.2);font-size:9px;margin-bottom:8px;">${UI.psychSub}</p>
+        <p style="color:#fff;font-weight:600;font-size:13px;line-height:1.65;">${esc(q.s)}</p>
+      </div>
+      ${UI.likert.map((label,i)=>`<button class="likert-opt" onclick="pickLikert(${i+1},'${type}')"><span class="likert-num" style="border-color:${dim.color};color:${dim.color};">${i+1}</span>${label}</button>`).join("")}
+    </div>
+  </div>`;
+}
+
+function screenLeaderboard(){
+  const sorted = [...S.mePlayers].sort((a,b)=>b.score-a.score);
+  const medals=["🥇","🥈","🥉"];
+  return `
+  <div class="screen" style="padding:16px 14px 32px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div><p style="color:${C.gold};font-size:16px;font-weight:900;">${UI.lbTitle}</p><p style="color:rgba(255,255,255,.75);font-size:9px;">RUZIVO · PGCN · Global</p></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn" style="width:auto;padding:5px 10px;font-size:10px;" onclick="loadME()">🔄</button>
+        <button class="btn" style="width:auto;padding:5px 12px;font-size:10px;" onclick="S.screen='map';render()">← Back</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+      ${[["Total Players",sorted.length,C.blue],["Countries",new Set(sorted.map(p=>p.country).filter(Boolean)).size,C.green],["Avg Score",sorted.length?Math.round(sorted.reduce((a,b)=>a+b.score,0)/sorted.length):0,C.gold]]
+        .map(([l,v,c])=>`<div class="me-stat" style="background:${c}18;border:1px solid ${c}33;"><p style="color:${c};font-size:20px;font-weight:900;">${S.meLoading?'...':v}</p><p style="color:rgba(255,255,255,.7);font-size:8px;">${l}</p></div>`).join("")}
+    </div>
+    ${!CONFIG.API_URL?`<div style="border-radius:10px;padding:8px 12px;background:${C.gold}12;border:1px solid ${C.gold}33;margin-bottom:10px;"><p style="color:${C.gold};font-size:9px;">⚠️ No backend configured — showing this device's data only. Set CONFIG.API_URL to see players from other countries.</p></div>`:''}
+    ${sorted.length===0?`<div style="border-radius:14px;padding:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center;"><p style="font-size:32px;margin-bottom:8px;">🏆</p><p style="color:rgba(255,255,255,.75);font-size:12px;">${UI.lbNoData}</p></div>`:
+      sorted.slice(0,20).map((p,i)=>`
+      <div class="lb-row" style="background:${i<3?C.gold+'10':'rgba(255,255,255,.04)'};border-color:${i<3?C.gold+'44':'rgba(255,255,255,.07)'};">
+        <span style="font-size:${i<3?20:13}px;font-weight:bold;color:${i<3?C.gold:'rgba(255,255,255,.3)'};min-width:24px;text-align:center;">${i<3?medals[i]:'#'+(i+1)}</span>
+        <div style="flex:1;"><p style="color:${p.name===S.name?'#27AE60':'#fff'};font-weight:bold;font-size:12px;">${esc(p.name)}${p.name===S.name?' 👈':''}</p><p style="color:rgba(255,255,255,.7);font-size:9px;">${esc(p.country||'—')} · ${esc(p.org||'—')} · ${esc(p.role||'—')}</p></div>
+        <div style="text-align:right;"><p style="color:${i<3?C.gold:C.blue};font-weight:900;font-size:14px;">${p.score}</p><p style="color:rgba(255,255,255,.25);font-size:8px;">${p.pct}%</p></div>
+      </div>`).join("")}
+    ${footerNote("Live data · PGCN EGSI Framework")}
+  </div>`;
+}
+
+function screenME(){
+  const countries=[...new Set(S.mePlayers.map(p=>p.country).filter(Boolean))];
+  const orgs=[...new Set(S.mePlayers.map(p=>p.org).filter(Boolean))];
+  return `
+  <div class="screen" style="padding:16px 14px 32px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div><p style="color:${C.gold};font-size:10px;font-weight:bold;">📊 ${UI.meTitle}</p><p style="color:rgba(255,255,255,.75);font-size:9px;">PGCN · EGSI · RUZIVO</p></div>
+      <button class="btn" style="width:auto;padding:5px 12px;font-size:11px;" onclick="S.screen='intro';render()">← Back</button>
+    </div>
+    ${!CONFIG.API_URL?`<div style="border-radius:10px;padding:8px 12px;background:${C.gold}12;border:1px solid ${C.gold}33;margin-bottom:10px;"><p style="color:${C.gold};font-size:9px;">⚠️ CONFIG.API_URL is empty. See apps-script-backend.gs to connect a real Google Sheet so players from other countries actually appear here.</p></div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+      ${[[UI.meTotalPlayers,S.mePlayers.length,C.blue],[UI.meCountries,countries.length,C.green],[UI.meOrgs,orgs.length,C.purple]]
+        .map(([l,v,c])=>`<div class="me-stat" style="background:${c}18;border:1px solid ${c}33;"><p style="color:${c};font-size:22px;font-weight:900;">${S.meLoading?'...':v}</p><p style="color:rgba(255,255,255,.75);font-size:9px;">${l}</p></div>`).join("")}
+    </div>
+    ${countries.length>0?`<div style="border-radius:12px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:8px;"><p style="color:${C.green};font-size:9px;font-weight:bold;margin-bottom:5px;">🌍 Countries</p><div style="display:flex;flex-wrap:wrap;gap:4px;">${countries.map(c=>`<span style="padding:3px 8px;border-radius:20px;background:${C.green}22;color:${C.green};font-size:9px;">${esc(c)}</span>`).join("")}</div></div>`:''}
+    <div style="border-radius:12px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);">
+      <p style="color:${C.gold};font-size:9px;font-weight:bold;margin-bottom:7px;">🕒 ${UI.meRecent}</p>
+      ${S.mePlayers.length===0?`<p style="color:rgba(255,255,255,.7);font-size:11px;text-align:center;padding:10px 0;">${UI.meNoData}</p>`:
+        S.mePlayers.slice(0,10).map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);"><div><p style="color:#fff;font-size:11px;font-weight:bold;">${esc(p.name)}</p><p style="color:rgba(255,255,255,.7);font-size:9px;">${esc(p.country||'—')} · ${esc(p.org||'—')}</p></div><p style="color:${C.gold};font-size:10px;font-weight:bold;">${p.score}pts</p></div>`).join("")}
+    </div>
+    <button class="btn secondary" onclick="loadME()">🔄 Refresh</button>
+  </div>`;
+}
+
+function screenReport(){
+  const DimBar = (d,s)=>`<div class="dimbar-row"><div style="display:flex;justify-content:space-between;margin-bottom:2px;"><span style="color:rgba(255,255,255,.55);font-size:9px;">${d.icon} ${d.label}</span><span style="color:${d.color};font-size:9px;font-weight:bold;">${s}%</span></div><div class="dimbar-track"><div class="dimbar-fill" style="background:linear-gradient(90deg,${d.color}88,${d.color});width:${s}%;"></div></div></div>`;
+  return `
+  <div class="screen center" style="padding:18px 14px 36px;">
+    <div class="cert-wrap" style="border:2px solid ${C.blue};box-shadow:0 0 60px ${C.green}18;">
+      <div class="cert-header" style="background:linear-gradient(135deg,#0a1a2e,#08251a);">
+        <p style="color:${C.blue};font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:3px;">Peace, Gender and Climate Network · EGSI Certified</p>
+        <div style="font-size:32px;margin:3px 0;">🏆</div>
+        <h2 style="font-weight:900;font-size:15px;margin-bottom:2px;">CERTIFICATE OF COMPLETION</h2>
+        <p style="color:rgba(255,255,255,.75);font-size:9px;margin-bottom:8px;">RUZIVO · PGCN · 2026</p>
+        <p style="color:rgba(255,255,255,.7);font-size:9px;margin-bottom:2px;">${UI.awarded}</p>
+        <p style="color:${C.green};font-size:22px;font-weight:900;margin-bottom:3px;">${esc(S.name)}</p>
+        ${(S.country||S.org)?`<p style="color:rgba(255,255,255,.7);font-size:9px;margin-bottom:5px;">${esc(S.country)}${S.country&&S.org?' · ':''}${esc(S.org)}${S.role?' · '+esc(S.role):''}</p>`:''}
+        <p style="color:rgba(255,255,255,.8);font-size:10px;line-height:1.55;margin-bottom:12px;">${UI.certBody}</p>
+        <div style="border-radius:13px;padding:12px;margin-bottom:10px;background:rgba(255,255,255,.04);border:1px solid ${C.blue}33;text-align:left;">
+          <p style="color:${C.blue};font-size:9px;font-weight:bold;letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase;">📊 ${UI.knowledgeAch}</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            ${[["Points",S.score,C.blue],["Accuracy",pct()+"%",C.green],["Best Streak","×"+S.best+"🔥",C.gold]]
+              .map(([l,v,c])=>`<div class="stat-box" style="background:${c}18;"><p style="color:${c};font-size:17px;font-weight:900;">${v}</p><p style="color:rgba(255,255,255,.7);font-size:8px;">${l}</p></div>`).join("")}
+          </div>
+        </div>
+        ${S.z5Profile?`<div style="border-radius:13px;padding:13px;margin-bottom:10px;background:linear-gradient(135deg,${C.green}12,${C.green}05);border:1px solid ${C.green}33;text-align:left;">
+          <p style="color:${C.green};font-size:9px;font-weight:bold;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;">🧰 ${UI.practitioner}</p>
+          <p style="color:${C.green};font-size:15px;font-weight:900;margin-bottom:3px;">${S.z5Profile.level}</p>
+          <p style="color:rgba(255,255,255,.8);font-size:10px;margin-bottom:9px;line-height:1.5;">${S.z5Profile.desc}</p>
+          ${PRACTITIONER_DIMS.map(d=>DimBar(d,S.z5Profile.scores[d.id])).join("")}
+          <div style="border-radius:7px;padding:5px 8px;background:${S.z5Profile.strongest.color}22;margin-top:5px;"><p style="color:${S.z5Profile.strongest.color};font-size:9px;font-weight:bold;">${S.z5Profile.strongest.icon} ${UI.strength}: ${S.z5Profile.strongest.label}</p></div>
+        </div>`:''}
+        ${S.z7Profile?`<div style="border-radius:13px;padding:13px;margin-bottom:10px;background:linear-gradient(135deg,${C.teal}12,${C.teal}05);border:1px solid ${C.teal}33;text-align:left;">
+          <p style="color:${C.teal};font-size:9px;font-weight:bold;letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase;">🧭 ${UI.deiProfile}</p>
+          <p style="color:${C.teal};font-size:15px;font-weight:900;margin-bottom:3px;">${S.z7Profile.profile}</p>
+          <p style="color:rgba(255,255,255,.8);font-size:10px;margin-bottom:9px;line-height:1.5;">${S.z7Profile.tagline}</p>
+          ${DIMENSIONS.map(d=>DimBar(d,S.z7Profile.scores[d.id])).join("")}
+          <div style="border-radius:7px;padding:5px 8px;background:${S.z7Profile.strongest.color}22;margin-top:5px;"><p style="color:${S.z7Profile.strongest.color};font-size:9px;font-weight:bold;">${S.z7Profile.strongest.icon} ${UI.strength}: ${S.z7Profile.strongest.label}</p></div>
+        </div>`:''}
+        ${S.z7Profile?`<div style="border-radius:13px;padding:13px;margin-bottom:12px;background:${C.gold}10;border:1px dashed ${C.gold}44;text-align:left;"><p style="color:${C.gold};font-size:9px;font-weight:bold;letter-spacing:.06em;margin-bottom:5px;text-transform:uppercase;">💡 ${UI.nextStep}</p><p style="color:rgba(255,255,255,.7);font-size:11px;line-height:1.65;">${S.z7Profile.alp}</p></div>`:''}
+        <div style="border-radius:12px;padding:11px;margin-bottom:10px;background:${C.green}10;border:1px solid ${C.green}33;text-align:center;"><p style="color:${C.green};font-size:10px;font-weight:900;letter-spacing:.08em;">⬡ EGSI CERTIFIED 2026</p><p style="color:rgba(255,255,255,.7);font-size:8px;margin-top:2px;">Earth Gaming Standards International · PGCN Game Architect</p></div>
+      </div>
+    </div>
+    ${S.done.includes(8)?'':`<div style="max-width:440px;width:100%;border-radius:12px;padding:11px;margin-top:12px;background:${C.purple}14;border:1px solid ${C.purple}55;text-align:center;"><p style="color:${C.purple};font-size:11px;font-weight:bold;">🌍 Zvose Integration Capstone awaits on the map</p><p style="color:rgba(255,255,255,.7);font-size:9px;margin-top:2px;">Pass at 70% to add ★ Integrated Mastery to this certificate</p><button class="btn" style="width:auto;padding:8px 20px;margin-top:7px;background:${C.purple};color:#fff;" onclick="S.screen='map';render()">Go to Capstone →</button></div>`}
+    <div style="max-width:440px;width:100%;border-radius:12px;padding:11px;margin-top:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.18);text-align:center;">
+      <p style="color:${C.gold};font-size:10px;font-weight:bold;margin-bottom:6px;">📈 Post-Programme Self-Assessment</p>
+      <div style="display:flex;gap:7px;justify-content:center;">${[1,2,3,4,5].map(n=>`<button class="selfbtn ${S.postSelf===n?'active':''}" aria-label="Rate ${n} of 5" onclick="S.postSelf=${n};saveReflection();render()">${n}</button>`).join("")}</div>
+      <p style="color:rgba(255,255,255,.65);font-size:9px;margin-top:6px;">${S.postSelf?`Learning gain recorded to M&E :- baseline ${S.preSelf||'—'}/5 → now ${S.postSelf}/5`:'Rate your DEI knowledge now :- your learning gain feeds the M&E dashboard'}</p>
+    </div>
+    <button class="btn" style="max-width:440px;margin-top:14px;background:linear-gradient(135deg,${C.blue},${C.green});color:#fff;" onclick="downloadCert()">${S.certLoading?'⏳ Generating...':'📄 Download PGCN Certificate'}</button>
+    <button class="btn secondary" style="max-width:440px;" onclick="loadME();S.screen='leaderboard';render()">🏆 View Global Leaderboard</button>
+    ${contactBox()}
+    ${supportBox()}
+    <button class="btn secondary" style="max-width:200px;" onclick="resetAll();S.screen='intro';render()">${UI.again}</button>
+  </div>`;
+}
+let reflectionTimer=null;
+function saveReflection(){
+  clearTimeout(reflectionTimer);
+  reflectionTimer=setTimeout(()=>{
+    if(!CONFIG.API_URL || !S.postSelf || S.postSentVal===S.postSelf) return;
+    S.postSentVal=S.postSelf;
+    const data={ timestamp:new Date().toISOString(), name:S.name, country:S.country,
+      organisation:(S.org||"N/A")+(S.role?" · "+S.role:""),
+      zone:"Learning Gain", score:S.score,
+      badge:S.capstonePassed?"Integrated Mastery ★":"—",
+      assessment:"Self-assessment pre "+(S.preSelf||0)+"/5 → post "+S.postSelf+"/5",
+      duration:Math.round((Date.now()-S.startedAt)/60000)+" min",
+      device:/Mobi|Android/i.test(navigator.userAgent)?"Mobile":"Desktop" };
+    fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)}).catch(()=>{});
+  },900);
+}
+function downloadCert(){
+  try{
+    const cv = buildCert();
+    const a = document.createElement('a');
+    a.download = `RUZIVO_PGCN_Certificate_${(S.name||'Participant').replace(/\s+/g,'_')}_2026.png`;
+    a.href = cv.toDataURL('image/png',1.0);
+    a.click();
+  }catch(e){ alert('Please screenshot this screen to save your certificate.'); }
+}
+
+/* ---------- router ---------- */
+/* ---------- sound engine :- Web Audio, generated tones, fully offline ---------- */
+let AC = null;
+function tone(freq, start, dur, vol, type){
+  try{
+    if(!S.sound) return;
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended") AC.resume();
+    const t = AC.currentTime + start;
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type||"sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol||0.18, t+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t); o.stop(t+dur+0.05);
+  }catch(e){}
+}
+function sndCorrect(){ tone(660,0,.12,.16); tone(880,.11,.16,.16); }
+function sndWrong(){ tone(240,0,.22,.10,"triangle"); }
+function sndFlip(){ tone(1200,0,.05,.08,"square"); }
+function sndZonePass(){ tone(523,0,.14,.16); tone(659,.13,.14,.16); tone(784,.26,.24,.18); }
+function sndMastery(){ tone(523,0,.14,.18); tone(659,.13,.14,.18); tone(784,.26,.14,.18); tone(1046,.4,.4,.2); }
+function toggleSound(){ S.sound=!S.sound; if(S.sound) sndCorrect(); render(); }
+
+function updateBeginBtn(){
+  const b = document.getElementById('beginBtn');
+  if(!b) return;
+  const ok = S.country.trim().length > 0;
+  b.disabled = !ok;
+  b.style.opacity = ok ? '1' : '.4';
+}
+
+function render(){
+  const app = document.getElementById("app");
+  let html = "";
+  switch(S.screen){
+    case "intro": html = screenIntro(); break;
+    case "register": html = screenRegister(); break;
+    case "concept": html = screenConcept(); break;
+    case "map": html = screenMap(); break;
+    case "zonecomplete": html = screenZoneComplete(); break;
+    case "wrongreview": html = screenWrongReview(); break;
+    case "game": html = screenGame(); break;
+    case "toolkit": html = screenLikert("toolkit"); break;
+    case "psychometric": html = screenLikert("psychometric"); break;
+    case "leaderboard": html = screenLeaderboard(); break;
+    case "me": html = screenME(); break;
+    case "report": html = screenReport(); break;
+    default: html = screenIntro();
+  }
+  app.innerHTML = html + `<button class="sndbtn" aria-label="${S.sound?'Mute sounds':'Unmute sounds'}" onclick="toggleSound()">${S.sound?'🔊':'🔇'}</button>`;
+  if(S.screen==="zonecomplete") spawnConfetti();
+}
+function spawnConfetti(){
+  const host = document.getElementById("confettiHost");
+  if(!host) return;
+  const colors=[C.gold,C.blue,C.green,C.purple,C.pink,C.teal,C.red];
+  for(let i=0;i<40;i++){
+    const p=document.createElement("div");
+    p.className="confetti-piece";
+    const size=6+Math.random()*6;
+    p.style.left=(Math.random()*100)+"%";
+    p.style.width=size+"px"; p.style.height=size+"px";
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.borderRadius=Math.random()>0.5?"50%":"2px";
+    p.style.animationDuration=(1.4+Math.random()*1.2)+"s";
+    p.style.animationDelay=(Math.random()*0.8)+"s";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),3000);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
